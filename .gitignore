@@ -1,0 +1,44 @@
+# Frontend
+Frontend/node_modules/
+Frontend/dist/
+Frontend/build/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# ML
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.pth
+*.onnx
+
+# Data
+*.csv
+*.parquet
+*.geojson
+*.gpkg
+*.osm.pbf
+*.tif
+*.tiff
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
