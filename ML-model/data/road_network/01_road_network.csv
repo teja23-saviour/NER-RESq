@@ -1,0 +1,168 @@
+road_id,from_node,to_node,state,from_district,to_district,road_type,distance_km,normal_speed_kmph,baseline_travel_time_hr,elevation_m,slope_degree,road_condition_score,bridge_flag
+R00001,N0001,N0002,Arunachal Pradesh,Tawang,Lower Subansiri,State Highway,54.5,38,1.43,1597.9,16.5,0.644,0
+R00002,N0002,N0003,Arunachal Pradesh,Lower Subansiri,Tawang,Major District Road,113.0,32,3.53,1684.9,20.7,0.96,0
+R00003,N0003,N0004,Arunachal Pradesh,Tawang,Upper Subansiri,PMGSY Road,162.4,22,7.38,1580.1,22.8,0.926,0
+R00004,N0004,N0005,Arunachal Pradesh,Upper Subansiri,Upper Subansiri,State Highway,157.9,38,4.16,1320.8,16.8,0.649,0
+R00005,N0005,N0006,Arunachal Pradesh,Upper Subansiri,East Kameng,State Highway,163.8,38,4.31,1549.7,25.1,0.2,0
+R00006,N0006,N0007,Arunachal Pradesh,East Kameng,West Kameng,Rural Road,234.1,25,9.36,1354.8,21.5,0.82,0
+R00007,N0007,N0008,Arunachal Pradesh,West Kameng,Tawang,PMGSY Road,151.1,22,6.87,1648.2,15.5,0.797,0
+R00008,N0008,N0009,Arunachal Pradesh,Tawang,Namsai,PMGSY Road,91.6,22,4.16,1976.0,18.7,0.859,0
+R00009,N0009,N0010,Arunachal Pradesh,Namsai,East Kameng,Major District Road,258.3,32,8.07,921.8,20.7,0.806,0
+R00010,N0010,N0011,Arunachal Pradesh,East Kameng,Namsai,National Highway,150.3,45,3.34,1980.2,17.1,0.812,0
+R00011,N0011,N0012,Arunachal Pradesh,Namsai,West Siang,Rural Road,131.4,25,5.26,1663.5,21.2,0.798,0
+R00012,N0012,N0013,Arunachal Pradesh,West Siang,Upper Subansiri,Border Road,111.2,28,3.97,1398.0,18.2,0.638,0
+R00013,N0013,N0014,Arunachal Pradesh,Upper Subansiri,Longding,Border Road,25.8,28,0.92,1130.4,21.4,0.888,0
+R00014,N0014,N0015,Arunachal Pradesh,Longding,Tirap,National Highway,160.5,45,3.57,874.4,23.6,0.637,0
+R00015,N0015,N0001,Arunachal Pradesh,Tirap,Tawang,Major District Road,266.6,32,8.33,1221.6,27.6,0.748,0
+R00016,N0001,N0004,Arunachal Pradesh,Tawang,Upper Subansiri,Rural Road,219.8,25,8.79,1318.6,12.0,0.616,0
+R00017,N0004,N0007,Arunachal Pradesh,Upper Subansiri,West Kameng,Rural Road,55.6,25,2.22,1205.7,27.7,0.471,0
+R00018,N0007,N0010,Arunachal Pradesh,West Kameng,East Kameng,State Highway,93.2,38,2.45,1771.2,20.8,0.738,0
+R00019,N0010,N0013,Arunachal Pradesh,East Kameng,Upper Subansiri,Rural Road,137.4,25,5.5,1646.1,19.4,0.848,0
+R00020,N0013,N0001,Arunachal Pradesh,Upper Subansiri,Tawang,Border Road,99.6,28,3.56,1417.7,17.4,0.511,0
+R00021,N0016,N0017,Assam,Darrang,Dhubri,National Highway,38.4,45,0.85,30,9.4,0.663,0
+R00022,N0017,N0018,Assam,Dhubri,Darrang,Major District Road,156.6,32,4.89,30,8.6,0.504,0
+R00023,N0018,N0019,Assam,Darrang,Dhemaji,PMGSY Road,254.1,22,11.55,70.7,3.1,0.838,0
+R00024,N0019,N0020,Assam,Dhemaji,Dhubri,Rural Road,28.9,25,1.16,764.6,1,0.98,0
+R00025,N0020,N0021,Assam,Dhubri,Golaghat,Rural Road,186.5,25,7.46,30,5.3,0.624,0
+R00026,N0021,N0022,Assam,Golaghat,Barpeta,National Highway,52.1,45,1.16,58.3,12.4,0.503,0
+R00027,N0022,N0023,Assam,Barpeta,Kamrup Metropolitan,Bridge Approach,187.2,20,9.36,30,1,0.467,1
+R00028,N0023,N0024,Assam,Kamrup Metropolitan,Nagaon,Rural Road,83.3,25,3.33,1155.4,1,0.82,0
+R00029,N0024,N0025,Assam,Nagaon,Tinsukia,Rural Road,111.6,25,4.47,1011.8,11.5,0.678,0
+R00030,N0025,N0026,Assam,Tinsukia,Kamrup,Major District Road,141.4,32,4.42,32.6,11.0,0.899,0
+R00031,N0026,N0027,Assam,Kamrup,Tinsukia,State Highway,25.4,38,0.67,756.2,9.8,0.382,0
+R00032,N0027,N0028,Assam,Tinsukia,Lakhimpur,National Highway,182.5,45,4.05,598.5,10.6,0.622,0
+R00033,N0028,N0029,Assam,Lakhimpur,Barpeta,Border Road,264.9,28,9.46,30,5.7,0.743,0
+R00034,N0029,N0030,Assam,Barpeta,Dibrugarh,State Highway,173.7,38,4.57,722.8,5.6,0.599,0
+R00035,N0030,N0016,Assam,Dibrugarh,Darrang,Major District Road,129.3,32,4.04,655.2,7.2,0.804,0
+R00036,N0016,N0019,Assam,Darrang,Dhemaji,National Highway,141.1,45,3.14,165.6,2.4,0.594,0
+R00037,N0019,N0022,Assam,Dhemaji,Barpeta,Border Road,201.3,28,7.19,30,7.0,0.869,0
+R00038,N0022,N0025,Assam,Barpeta,Tinsukia,Rural Road,72.2,25,2.89,427.5,11.7,0.971,0
+R00039,N0025,N0028,Assam,Tinsukia,Lakhimpur,Border Road,156.9,28,5.6,137.6,15.3,0.821,0
+R00040,N0028,N0016,Assam,Lakhimpur,Darrang,National Highway,150.5,45,3.34,583.6,9.5,0.811,0
+R00041,N0031,N0032,Manipur,Noney,Ukhrul,PMGSY Road,87.0,22,3.96,617.1,12.6,0.925,0
+R00042,N0032,N0033,Manipur,Ukhrul,Jiribam,Rural Road,168.5,25,6.74,312.5,11.9,0.785,0
+R00043,N0033,N0034,Manipur,Jiribam,Ukhrul,National Highway,234.6,45,5.21,742.1,4.7,0.775,0
+R00044,N0034,N0035,Manipur,Ukhrul,Ukhrul,State Highway,221.1,38,5.82,111.7,9.8,0.877,0
+R00045,N0035,N0036,Manipur,Ukhrul,Ukhrul,State Highway,99.0,38,2.6,893.2,10.7,0.802,0
+R00046,N0036,N0037,Manipur,Ukhrul,Tamenglong,Major District Road,63.3,32,1.98,599.0,16.6,0.745,0
+R00047,N0037,N0038,Manipur,Tamenglong,Ukhrul,Rural Road,86.5,25,3.46,30,7.2,0.752,0
+R00048,N0038,N0039,Manipur,Ukhrul,Thoubal,PMGSY Road,153.8,22,6.99,421.3,16.3,0.439,0
+R00049,N0039,N0040,Manipur,Thoubal,Noney,Border Road,207.7,28,7.42,229.1,7.7,0.907,0
+R00050,N0040,N0041,Manipur,Noney,Imphal East,State Highway,181.7,38,4.78,87.3,12.4,0.881,0
+R00051,N0041,N0042,Manipur,Imphal East,Jiribam,Border Road,143.7,28,5.13,548.7,16.2,0.792,0
+R00052,N0042,N0043,Manipur,Jiribam,Noney,Major District Road,102.7,32,3.21,176.8,1.2,0.899,0
+R00053,N0043,N0044,Manipur,Noney,Ukhrul,Rural Road,125.1,25,5.0,299.8,8.3,0.507,0
+R00054,N0044,N0045,Manipur,Ukhrul,Senapati,Border Road,46.7,28,1.67,655.7,14.1,0.588,0
+R00055,N0045,N0031,Manipur,Senapati,Noney,State Highway,83.1,38,2.19,593.7,10.7,0.689,0
+R00056,N0031,N0034,Manipur,Noney,Ukhrul,Bridge Approach,191.6,20,9.58,30,9.2,0.771,1
+R00057,N0034,N0037,Manipur,Ukhrul,Tamenglong,National Highway,238.3,45,5.3,225.6,13.0,0.529,0
+R00058,N0037,N0040,Manipur,Tamenglong,Noney,State Highway,40.9,38,1.08,263.0,8.9,0.727,0
+R00059,N0040,N0043,Manipur,Noney,Noney,Rural Road,194.5,25,7.78,291.1,3.2,0.645,0
+R00060,N0043,N0031,Manipur,Noney,Noney,National Highway,138.5,45,3.08,69.4,5.5,0.726,0
+R00061,N0046,N0047,Meghalaya,South Garo Hills,Eastern West Khasi Hills,PMGSY Road,21.2,22,0.96,321.0,16.6,0.908,0
+R00062,N0047,N0048,Meghalaya,Eastern West Khasi Hills,West Garo Hills,State Highway,217.3,38,5.72,1056.9,16.2,0.758,0
+R00063,N0048,N0049,Meghalaya,West Garo Hills,North Garo Hills,State Highway,138.0,38,3.63,831.3,15.4,0.78,0
+R00064,N0049,N0050,Meghalaya,North Garo Hills,East Khasi Hills,State Highway,82.6,38,2.17,1410.0,19.2,0.929,0
+R00065,N0050,N0051,Meghalaya,East Khasi Hills,East Garo Hills,Bridge Approach,106.8,20,5.34,756.3,15.5,0.846,1
+R00066,N0051,N0052,Meghalaya,East Garo Hills,East Garo Hills,Rural Road,188.8,25,7.55,1357.5,17.5,0.737,0
+R00067,N0052,N0053,Meghalaya,East Garo Hills,South West Khasi Hills,State Highway,232.9,38,6.13,686.2,11.1,0.628,0
+R00068,N0053,N0054,Meghalaya,South West Khasi Hills,Ri-Bhoi,State Highway,26.8,38,0.71,1032.6,10.4,0.715,0
+R00069,N0054,N0055,Meghalaya,Ri-Bhoi,West Jaintia Hills,PMGSY Road,184.7,22,8.4,484.0,13.1,0.879,0
+R00070,N0055,N0056,Meghalaya,West Jaintia Hills,East Garo Hills,Rural Road,63.6,25,2.54,1031.4,24.2,0.655,0
+R00071,N0056,N0057,Meghalaya,East Garo Hills,South West Khasi Hills,National Highway,255.7,45,5.68,469.7,14.9,0.872,0
+R00072,N0057,N0058,Meghalaya,South West Khasi Hills,East Khasi Hills,State Highway,172.7,38,4.54,1182.9,20.2,0.443,0
+R00073,N0058,N0059,Meghalaya,East Khasi Hills,West Khasi Hills,National Highway,165.7,45,3.68,614.0,12.8,0.706,0
+R00074,N0059,N0060,Meghalaya,West Khasi Hills,East Garo Hills,Rural Road,220.6,25,8.82,1585.4,8.6,0.501,0
+R00075,N0060,N0046,Meghalaya,East Garo Hills,South Garo Hills,National Highway,229.7,45,5.1,1308.3,19.5,0.928,0
+R00076,N0046,N0049,Meghalaya,South Garo Hills,North Garo Hills,PMGSY Road,97.3,22,4.42,1230.0,12.0,0.912,0
+R00077,N0049,N0052,Meghalaya,North Garo Hills,East Garo Hills,National Highway,120.7,45,2.68,427.3,13.7,0.693,0
+R00078,N0052,N0055,Meghalaya,East Garo Hills,West Jaintia Hills,PMGSY Road,184.1,22,8.37,1098.8,8.6,0.875,0
+R00079,N0055,N0058,Meghalaya,West Jaintia Hills,East Khasi Hills,Rural Road,137.9,25,5.52,1175.8,21.5,0.867,0
+R00080,N0058,N0046,Meghalaya,East Khasi Hills,South Garo Hills,State Highway,141.1,38,3.71,902.8,15.6,0.779,0
+R00081,N0061,N0062,Mizoram,Saitual,Hnahthial,PMGSY Road,162.0,22,7.36,630.9,13.2,0.955,0
+R00082,N0062,N0063,Mizoram,Hnahthial,Serchhip,Bridge Approach,14.2,20,0.71,703.7,10.4,0.393,1
+R00083,N0063,N0064,Mizoram,Serchhip,Hnahthial,PMGSY Road,102.0,22,4.64,461.2,11.7,0.731,0
+R00084,N0064,N0065,Mizoram,Hnahthial,Saitual,Major District Road,175.3,32,5.48,469.4,8.3,0.77,0
+R00085,N0065,N0066,Mizoram,Saitual,Aizawl,Rural Road,48.1,25,1.92,913.5,17.4,0.443,0
+R00086,N0066,N0067,Mizoram,Aizawl,Hnahthial,State Highway,157.5,38,4.15,1222.8,14.9,0.772,0
+R00087,N0067,N0068,Mizoram,Hnahthial,Aizawl,Border Road,33.2,28,1.19,261.3,13.7,0.893,0
+R00088,N0068,N0069,Mizoram,Aizawl,Mamit,State Highway,66.0,38,1.74,1093.4,15.6,0.757,0
+R00089,N0069,N0070,Mizoram,Mamit,Hnahthial,National Highway,142.9,45,3.18,1221.4,13.1,0.861,0
+R00090,N0070,N0071,Mizoram,Hnahthial,Champhai,State Highway,17.4,38,0.46,726.1,18.9,0.887,0
+R00091,N0071,N0072,Mizoram,Champhai,Mamit,Major District Road,143.6,32,4.49,30,15.8,0.543,0
+R00092,N0072,N0073,Mizoram,Mamit,Champhai,Major District Road,131.5,32,4.11,1158.3,22.4,0.473,0
+R00093,N0073,N0074,Mizoram,Champhai,Lunglei,National Highway,69.1,45,1.53,195.0,13.8,0.639,0
+R00094,N0074,N0075,Mizoram,Lunglei,Serchhip,Major District Road,169.4,32,5.29,1205.9,13.5,0.885,0
+R00095,N0075,N0061,Mizoram,Serchhip,Saitual,PMGSY Road,125.6,22,5.71,567.8,12.7,0.925,0
+R00096,N0061,N0064,Mizoram,Saitual,Hnahthial,State Highway,54.7,38,1.44,655.0,15.7,0.369,0
+R00097,N0064,N0067,Mizoram,Hnahthial,Hnahthial,National Highway,87.7,45,1.95,305.6,13.7,0.753,0
+R00098,N0067,N0070,Mizoram,Hnahthial,Hnahthial,PMGSY Road,44.9,22,2.04,345.3,16.3,0.649,0
+R00099,N0070,N0073,Mizoram,Hnahthial,Champhai,Major District Road,169.3,32,5.29,1261.7,17.1,0.528,0
+R00100,N0073,N0061,Mizoram,Champhai,Saitual,PMGSY Road,237.2,22,10.78,1208.8,10.8,0.55,0
+R00101,N0076,N0077,Nagaland,Kohima,Zunheboto,State Highway,202.8,38,5.34,1093.4,8.8,0.742,0
+R00102,N0077,N0078,Nagaland,Zunheboto,Niuland,Rural Road,180.8,25,7.23,590.1,14.8,0.775,0
+R00103,N0078,N0079,Nagaland,Niuland,Peren,State Highway,192.1,38,5.05,126.1,13.1,0.944,0
+R00104,N0079,N0080,Nagaland,Peren,Longleng,PMGSY Road,157.7,22,7.17,551.6,13.4,0.767,0
+R00105,N0080,N0081,Nagaland,Longleng,Chumoukedima,Major District Road,90.4,32,2.82,404.1,19.1,0.676,0
+R00106,N0081,N0082,Nagaland,Chumoukedima,Mon,Rural Road,140.7,25,5.63,1186.3,13.6,0.745,0
+R00107,N0082,N0083,Nagaland,Mon,Dimapur,Bridge Approach,181.0,20,9.05,1337.8,12.4,0.825,1
+R00108,N0083,N0084,Nagaland,Dimapur,Chumoukedima,National Highway,44.3,45,0.99,1215.4,11.8,0.903,0
+R00109,N0084,N0085,Nagaland,Chumoukedima,Phek,Border Road,252.4,28,9.01,698.8,4.6,0.742,0
+R00110,N0085,N0086,Nagaland,Phek,Wokha,Major District Road,35.0,32,1.09,902.1,20.9,0.751,0
+R00111,N0086,N0087,Nagaland,Wokha,Kohima,State Highway,209.6,38,5.52,88.6,17.2,0.753,0
+R00112,N0087,N0088,Nagaland,Kohima,Longleng,State Highway,178.8,38,4.71,113.9,7.7,0.506,0
+R00113,N0088,N0089,Nagaland,Longleng,Longleng,PMGSY Road,78.6,22,3.57,793.0,23.6,0.579,0
+R00114,N0089,N0090,Nagaland,Longleng,Chumoukedima,Rural Road,222.1,25,8.89,809.2,12.0,0.974,0
+R00115,N0090,N0076,Nagaland,Chumoukedima,Kohima,National Highway,222.0,45,4.93,1006.3,19.3,0.828,0
+R00116,N0076,N0079,Nagaland,Kohima,Peren,Rural Road,243.9,25,9.75,823.9,11.7,0.796,0
+R00117,N0079,N0082,Nagaland,Peren,Mon,Rural Road,208.5,25,8.34,404.0,10.8,0.878,0
+R00118,N0082,N0085,Nagaland,Mon,Phek,State Highway,177.7,38,4.68,734.2,13.7,0.835,0
+R00119,N0085,N0088,Nagaland,Phek,Longleng,Rural Road,70.7,25,2.83,554.5,5.5,0.671,0
+R00120,N0088,N0076,Nagaland,Longleng,Kohima,State Highway,76.1,38,2.0,940.7,14.2,0.458,0
+R00121,N0091,N0092,Sikkim,Gangtok,Namchi,Border Road,150.2,28,5.36,1998.3,13.2,0.722,0
+R00122,N0092,N0093,Sikkim,Namchi,Gangtok,National Highway,48.4,45,1.08,1644.1,23.1,0.527,0
+R00123,N0093,N0094,Sikkim,Gangtok,Gangtok,Border Road,60.6,28,2.16,1693.1,24.9,0.598,0
+R00124,N0094,N0095,Sikkim,Gangtok,Gyalshing,National Highway,245.5,45,5.46,1201.9,20.4,0.651,0
+R00125,N0095,N0096,Sikkim,Gyalshing,Pakyong,Border Road,114.2,28,4.08,1270.2,20.3,0.543,0
+R00126,N0096,N0097,Sikkim,Pakyong,Mangan,State Highway,209.3,38,5.51,1584.8,19.5,0.854,0
+R00127,N0097,N0098,Sikkim,Mangan,Namchi,PMGSY Road,148.2,22,6.74,1378.1,14.7,0.823,0
+R00128,N0098,N0099,Sikkim,Namchi,Mangan,National Highway,96.4,45,2.14,1459.3,25.6,0.87,0
+R00129,N0099,N0100,Sikkim,Mangan,Gyalshing,Major District Road,172.3,32,5.38,1669.5,21.1,0.613,0
+R00130,N0100,N0101,Sikkim,Gyalshing,Namchi,Major District Road,224.6,32,7.02,1866.8,23.6,0.563,0
+R00131,N0101,N0102,Sikkim,Namchi,Gyalshing,Bridge Approach,102.5,20,5.13,1430.7,17.9,0.678,1
+R00132,N0102,N0103,Sikkim,Gyalshing,Namchi,State Highway,167.8,38,4.42,1847.6,13.0,0.965,0
+R00133,N0103,N0104,Sikkim,Namchi,Mangan,Major District Road,283.7,32,8.87,454.7,22.0,0.836,0
+R00134,N0104,N0105,Sikkim,Mangan,Mangan,Rural Road,296.4,25,11.86,1467.2,18.4,0.637,0
+R00135,N0105,N0091,Sikkim,Mangan,Gangtok,National Highway,268.8,45,5.97,1240.5,17.7,0.835,0
+R00136,N0091,N0094,Sikkim,Gangtok,Gangtok,Rural Road,163.3,25,6.53,2156.7,18.6,0.662,0
+R00137,N0094,N0097,Sikkim,Gangtok,Mangan,Border Road,19.3,28,0.69,1740.6,30.8,0.845,0
+R00138,N0097,N0100,Sikkim,Mangan,Gyalshing,Rural Road,192.5,25,7.7,1622.9,17.4,0.819,0
+R00139,N0100,N0103,Sikkim,Gyalshing,Namchi,State Highway,252.7,38,6.65,2279.0,14.6,0.58,0
+R00140,N0103,N0091,Sikkim,Namchi,Gangtok,Rural Road,256.4,25,10.26,1635.2,23.6,0.526,0
+R00141,N0106,N0107,Tripura,West Tripura,West Tripura,Major District Road,191.7,32,5.99,49.5,1,0.921,0
+R00142,N0107,N0108,Tripura,West Tripura,Unakoti,Bridge Approach,175.1,20,8.75,30,4.3,0.601,1
+R00143,N0108,N0109,Tripura,Unakoti,South Tripura,State Highway,170.2,38,4.48,332.9,1.6,0.881,0
+R00144,N0109,N0110,Tripura,South Tripura,Dhalai,Border Road,173.4,28,6.19,363.4,1,0.509,0
+R00145,N0110,N0111,Tripura,Dhalai,Dhalai,Rural Road,192.0,25,7.68,211.0,1,0.887,0
+R00146,N0111,N0112,Tripura,Dhalai,Unakoti,PMGSY Road,159.0,22,7.23,420.8,3.4,0.842,0
+R00147,N0112,N0113,Tripura,Unakoti,Unakoti,Border Road,133.2,28,4.76,30,6.1,0.79,0
+R00148,N0113,N0114,Tripura,Unakoti,Sepahijala,State Highway,177.5,38,4.67,314.1,5.9,0.701,0
+R00149,N0114,N0115,Tripura,Sepahijala,West Tripura,State Highway,185.7,38,4.89,30,9.6,0.805,0
+R00150,N0115,N0116,Tripura,West Tripura,Sepahijala,State Highway,43.0,38,1.13,30,8.6,0.866,0
+R00151,N0116,N0117,Tripura,Sepahijala,Dhalai,Border Road,163.1,28,5.83,30,4.5,0.815,0
+R00152,N0117,N0118,Tripura,Dhalai,Dhalai,State Highway,87.1,38,2.29,311.1,1,0.466,0
+R00153,N0118,N0119,Tripura,Dhalai,West Tripura,Border Road,170.7,28,6.1,100.6,5.5,0.803,0
+R00154,N0119,N0120,Tripura,West Tripura,Sepahijala,Border Road,186.3,28,6.65,57.7,3.4,0.933,0
+R00155,N0120,N0106,Tripura,Sepahijala,West Tripura,Major District Road,48.1,32,1.5,567.5,1.9,0.764,0
+R00156,N0106,N0109,Tripura,West Tripura,South Tripura,PMGSY Road,122.2,22,5.55,30,8.7,0.955,0
+R00157,N0109,N0112,Tripura,South Tripura,Unakoti,Major District Road,29.2,32,0.91,420.9,1,0.837,0
+R00158,N0112,N0115,Tripura,Unakoti,West Tripura,Rural Road,52.4,25,2.1,136.1,1.3,0.814,0
+R00159,N0115,N0118,Tripura,West Tripura,Dhalai,PMGSY Road,69.5,22,3.16,122.9,7.6,0.87,0
+R00160,N0118,N0106,Tripura,Dhalai,West Tripura,PMGSY Road,43.7,22,1.99,374.2,8.2,0.685,0
+R00161,N0017,N0013,Inter-state corridor,Dhubri,Upper Subansiri,Border Road,211.7,28,7.56,332.3,11.5,0.703,0
+R00162,N0026,N0049,Inter-state corridor,Kamrup,North Garo Hills,PMGSY Road,285.0,22,12.96,521.8,10.5,0.728,0
+R00163,N0022,N0078,Inter-state corridor,Barpeta,Niuland,PMGSY Road,94.5,22,4.29,471.2,4.5,0.882,0
+R00164,N0022,N0033,Inter-state corridor,Barpeta,Jiribam,Rural Road,190.1,25,7.6,421.4,10.6,0.892,0
+R00165,N0030,N0068,Inter-state corridor,Dibrugarh,Aizawl,PMGSY Road,246.1,22,11.19,1060.9,8.7,0.667,0
+R00166,N0018,N0119,Inter-state corridor,Darrang,West Tripura,Major District Road,285.1,32,8.91,830.6,7.0,0.861,0
+R00167,N0029,N0091,Inter-state corridor,Barpeta,Gangtok,Rural Road,543.1,25,21.72,835.8,22.3,0.853,0

@@ -1,0 +1,102 @@
+location_id,location_name,state,district,latitude,longitude,nearest_node,mapping_method,coordinate_status
+LOC0001,Tawang,Arunachal Pradesh,Tawang,27.59,93.4,N0001,district-match,SYNTHETIC_PROTOTYPE
+LOC0002,West Kameng,Arunachal Pradesh,West Kameng,27.77,93.4,N0007,district-match,SYNTHETIC_PROTOTYPE
+LOC0003,East Kameng,Arunachal Pradesh,East Kameng,27.95,93.4,N0006,district-match,SYNTHETIC_PROTOTYPE
+LOC0004,Papum Pare,Arunachal Pradesh,Papum Pare,28.13,93.4,N0004,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0005,Lower Subansiri,Arunachal Pradesh,Lower Subansiri,28.31,93.4,N0002,district-match,SYNTHETIC_PROTOTYPE
+LOC0006,Upper Subansiri,Arunachal Pradesh,Upper Subansiri,27.59,93.62,N0004,district-match,SYNTHETIC_PROTOTYPE
+LOC0007,East Siang,Arunachal Pradesh,East Siang,27.77,93.62,N0007,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0008,West Siang,Arunachal Pradesh,West Siang,27.95,93.62,N0012,district-match,SYNTHETIC_PROTOTYPE
+LOC0009,Upper Siang,Arunachal Pradesh,Upper Siang,28.13,93.62,N0009,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0010,Lohit,Arunachal Pradesh,Lohit,28.31,93.62,N0010,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0011,Anjaw,Arunachal Pradesh,Anjaw,27.59,93.84,N0011,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0012,Changlang,Arunachal Pradesh,Changlang,27.77,93.84,N0012,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0013,Tirap,Arunachal Pradesh,Tirap,27.95,93.84,N0015,district-match,SYNTHETIC_PROTOTYPE
+LOC0014,Longding,Arunachal Pradesh,Longding,28.13,93.84,N0014,district-match,SYNTHETIC_PROTOTYPE
+LOC0015,Namsai,Arunachal Pradesh,Namsai,28.31,93.84,N0009,district-match,SYNTHETIC_PROTOTYPE
+LOC0016,Kamrup Metropolitan,Assam,Kamrup Metropolitan,25.84,92.72,N0023,district-match,SYNTHETIC_PROTOTYPE
+LOC0017,Kamrup,Assam,Kamrup,26.02,92.72,N0019,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0018,Sonitpur,Assam,Sonitpur,26.2,92.72,N0020,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0019,Biswanath,Assam,Biswanath,26.38,92.72,N0021,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0020,Lakhimpur,Assam,Lakhimpur,26.56,92.72,N0028,district-match,SYNTHETIC_PROTOTYPE
+LOC0021,Dhemaji,Assam,Dhemaji,25.84,92.94,N0019,district-match,SYNTHETIC_PROTOTYPE
+LOC0022,Dibrugarh,Assam,Dibrugarh,26.02,92.94,N0025,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0023,Tinsukia,Assam,Tinsukia,26.2,92.94,N0025,district-match,SYNTHETIC_PROTOTYPE
+LOC0024,Sivasagar,Assam,Sivasagar,26.38,92.94,N0028,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0025,Jorhat,Assam,Jorhat,26.56,92.94,N0016,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0026,Golaghat,Assam,Golaghat,25.84,93.16,N0021,district-match,SYNTHETIC_PROTOTYPE
+LOC0027,Nagaon,Assam,Nagaon,26.02,93.16,N0024,district-match,SYNTHETIC_PROTOTYPE
+LOC0028,Dima Hasao,Assam,Dima Hasao,26.2,93.16,N0021,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0029,Cachar,Assam,Cachar,26.38,93.16,N0023,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0030,Barpeta,Assam,Barpeta,26.56,93.16,N0024,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0031,Dhubri,Assam,Dhubri,25.84,93.38,N0020,district-match,SYNTHETIC_PROTOTYPE
+LOC0032,Darrang,Assam,Darrang,26.02,93.38,N0016,district-match,SYNTHETIC_PROTOTYPE
+LOC0033,Udalguri,Assam,Udalguri,26.2,93.38,N0028,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0034,Kokrajhar,Assam,Kokrajhar,26.38,93.38,N0016,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0035,Imphal West,Manipur,Imphal West,24.36,93.73,N0031,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0036,Imphal East,Manipur,Imphal East,24.54,93.73,N0041,district-match,SYNTHETIC_PROTOTYPE
+LOC0037,Thoubal,Manipur,Thoubal,24.72,93.73,N0039,district-match,SYNTHETIC_PROTOTYPE
+LOC0038,Bishnupur,Manipur,Bishnupur,24.9,93.73,N0035,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0039,Churachandpur,Manipur,Churachandpur,25.08,93.73,N0036,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0040,Senapati,Manipur,Senapati,24.36,93.95,N0045,district-match,SYNTHETIC_PROTOTYPE
+LOC0041,Ukhrul,Manipur,Ukhrul,24.54,93.95,N0032,district-match,SYNTHETIC_PROTOTYPE
+LOC0042,Tamenglong,Manipur,Tamenglong,24.72,93.95,N0037,district-match,SYNTHETIC_PROTOTYPE
+LOC0043,Jiribam,Manipur,Jiribam,24.9,93.95,N0042,district-match,SYNTHETIC_PROTOTYPE
+LOC0044,Kamjong,Manipur,Kamjong,25.08,93.95,N0041,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0045,Noney,Manipur,Noney,24.36,94.17,N0031,district-match,SYNTHETIC_PROTOTYPE
+LOC0046,East Khasi Hills,Meghalaya,East Khasi Hills,25.14,91.63,N0050,district-match,SYNTHETIC_PROTOTYPE
+LOC0047,West Khasi Hills,Meghalaya,West Khasi Hills,25.32,91.63,N0059,district-match,SYNTHETIC_PROTOTYPE
+LOC0048,Eastern West Khasi Hills,Meghalaya,Eastern West Khasi Hills,25.5,91.63,N0047,district-match,SYNTHETIC_PROTOTYPE
+LOC0049,South West Khasi Hills,Meghalaya,South West Khasi Hills,25.68,91.63,N0053,district-match,SYNTHETIC_PROTOTYPE
+LOC0050,Ri-Bhoi,Meghalaya,Ri-Bhoi,25.86,91.63,N0054,district-match,SYNTHETIC_PROTOTYPE
+LOC0051,West Jaintia Hills,Meghalaya,West Jaintia Hills,25.14,91.85,N0055,district-match,SYNTHETIC_PROTOTYPE
+LOC0052,East Jaintia Hills,Meghalaya,East Jaintia Hills,25.32,91.85,N0053,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0053,West Garo Hills,Meghalaya,West Garo Hills,25.5,91.85,N0048,district-match,SYNTHETIC_PROTOTYPE
+LOC0054,East Garo Hills,Meghalaya,East Garo Hills,25.68,91.85,N0051,district-match,SYNTHETIC_PROTOTYPE
+LOC0055,South Garo Hills,Meghalaya,South Garo Hills,25.86,91.85,N0046,district-match,SYNTHETIC_PROTOTYPE
+LOC0056,North Garo Hills,Meghalaya,North Garo Hills,25.14,92.07,N0057,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0057,Aizawl,Mizoram,Aizawl,23.0,92.61,N0066,district-match,SYNTHETIC_PROTOTYPE
+LOC0058,Lunglei,Mizoram,Lunglei,23.18,92.61,N0074,district-match,SYNTHETIC_PROTOTYPE
+LOC0059,Champhai,Mizoram,Champhai,23.36,92.61,N0071,district-match,SYNTHETIC_PROTOTYPE
+LOC0060,Kolasib,Mizoram,Kolasib,23.54,92.61,N0064,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0061,Serchhip,Mizoram,Serchhip,23.72,92.61,N0063,district-match,SYNTHETIC_PROTOTYPE
+LOC0062,Lawngtlai,Mizoram,Lawngtlai,23.0,92.83,N0066,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0063,Mamit,Mizoram,Mamit,23.18,92.83,N0069,district-match,SYNTHETIC_PROTOTYPE
+LOC0064,Hnahthial,Mizoram,Hnahthial,23.36,92.83,N0062,district-match,SYNTHETIC_PROTOTYPE
+LOC0065,Saitual,Mizoram,Saitual,23.54,92.83,N0061,district-match,SYNTHETIC_PROTOTYPE
+LOC0066,Kohima,Nagaland,Kohima,25.31,93.89,N0076,district-match,SYNTHETIC_PROTOTYPE
+LOC0067,Dimapur,Nagaland,Dimapur,25.49,93.89,N0083,district-match,SYNTHETIC_PROTOTYPE
+LOC0068,Mokokchung,Nagaland,Mokokchung,25.67,93.89,N0079,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0069,Tuensang,Nagaland,Tuensang,25.85,93.89,N0080,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0070,Mon,Nagaland,Mon,26.03,93.89,N0082,district-match,SYNTHETIC_PROTOTYPE
+LOC0071,Wokha,Nagaland,Wokha,25.31,94.11,N0086,district-match,SYNTHETIC_PROTOTYPE
+LOC0072,Zunheboto,Nagaland,Zunheboto,25.49,94.11,N0077,district-match,SYNTHETIC_PROTOTYPE
+LOC0073,Phek,Nagaland,Phek,25.67,94.11,N0085,district-match,SYNTHETIC_PROTOTYPE
+LOC0074,Kiphire,Nagaland,Kiphire,25.85,94.11,N0085,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0075,Longleng,Nagaland,Longleng,26.03,94.11,N0080,district-match,SYNTHETIC_PROTOTYPE
+LOC0076,Peren,Nagaland,Peren,25.31,94.33,N0079,district-match,SYNTHETIC_PROTOTYPE
+LOC0077,Chumoukedima,Nagaland,Chumoukedima,25.49,94.33,N0081,district-match,SYNTHETIC_PROTOTYPE
+LOC0078,Niuland,Nagaland,Niuland,25.67,94.33,N0089,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0079,Gangtok,Sikkim,Gangtok,27.17,88.3,N0093,district-match,SYNTHETIC_PROTOTYPE
+LOC0080,Mangan,Sikkim,Mangan,27.35,88.3,N0097,district-match,SYNTHETIC_PROTOTYPE
+LOC0081,Pakyong,Sikkim,Pakyong,27.53,88.3,N0096,district-match,SYNTHETIC_PROTOTYPE
+LOC0082,Namchi,Sikkim,Namchi,27.71,88.3,N0092,district-match,SYNTHETIC_PROTOTYPE
+LOC0083,Soreng,Sikkim,Soreng,27.89,88.3,N0096,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0084,Gyalshing,Sikkim,Gyalshing,27.17,88.52,N0095,district-match,SYNTHETIC_PROTOTYPE
+LOC0085,West Tripura,Tripura,West Tripura,23.47,91.06,N0106,district-match,SYNTHETIC_PROTOTYPE
+LOC0086,Sepahijala,Tripura,Sepahijala,23.65,91.06,N0114,district-match,SYNTHETIC_PROTOTYPE
+LOC0087,Khowai,Tripura,Khowai,23.83,91.06,N0108,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0088,Gomati,Tripura,Gomati,24.01,91.06,N0109,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0089,South Tripura,Tripura,South Tripura,24.19,91.06,N0109,district-match,SYNTHETIC_PROTOTYPE
+LOC0090,Dhalai,Tripura,Dhalai,23.47,91.28,N0110,district-match,SYNTHETIC_PROTOTYPE
+LOC0091,Unakoti,Tripura,Unakoti,23.65,91.28,N0108,district-match,SYNTHETIC_PROTOTYPE
+LOC0092,North Tripura,Tripura,North Tripura,23.83,91.28,N0113,state-fallback,SYNTHETIC_PROTOTYPE
+LOC0093,Guwahati,Assam,Kamrup Metropolitan,25.84,92.72,N0023,city-alias,SYNTHETIC_PROTOTYPE
+LOC0094,Tawang,Arunachal Pradesh,Tawang,27.59,93.4,N0001,city-alias,SYNTHETIC_PROTOTYPE
+LOC0095,Itanagar,Arunachal Pradesh,Papum Pare,28.13,93.4,N0004,city-alias,SYNTHETIC_PROTOTYPE
+LOC0096,Shillong,Meghalaya,East Khasi Hills,25.14,91.63,N0050,city-alias,SYNTHETIC_PROTOTYPE
+LOC0097,Imphal,Manipur,Imphal West,24.36,93.73,N0031,city-alias,SYNTHETIC_PROTOTYPE
+LOC0098,Aizawl,Mizoram,Aizawl,23.0,92.61,N0066,city-alias,SYNTHETIC_PROTOTYPE
+LOC0099,Kohima,Nagaland,Kohima,25.31,93.89,N0076,city-alias,SYNTHETIC_PROTOTYPE
+LOC0100,Gangtok,Sikkim,Gangtok,27.17,88.3,N0093,city-alias,SYNTHETIC_PROTOTYPE
+LOC0101,Agartala,Tripura,West Tripura,23.47,91.06,N0106,city-alias,SYNTHETIC_PROTOTYPE
