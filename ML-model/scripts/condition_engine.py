@@ -7,8 +7,11 @@ from datetime import datetime, timezone
 # FILE PATHS
 # ============================================================
 
-ROAD_RISK_PATH = "data/risk/02_road_risk_ml.csv"
+from pathlib import Path
 
+ML_MODEL_DIR = Path(__file__).resolve().parents[1]
+
+ROAD_RISK_PATH = ML_MODEL_DIR / "data" / "risk" / "02_road_risk_ml.csv"
 
 # ============================================================
 # LOAD DATA

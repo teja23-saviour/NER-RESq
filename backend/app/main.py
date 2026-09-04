@@ -1,0 +1,40 @@
+from fastapi import FastAPI
+
+from app.api.routes.incidents import router as incidents_router
+from app.api.routes.routes import router as routes_router
+from app.api.routes.locations import router as locations_router
+from app.api.routes.vehicles import router as vehicles_router
+from app.api.routes.trips import router as trips_router
+from app.api.routes.dashboard import router as dashboard_router
+from app.api.routes.alerts import router as alerts_router
+from app.api.routes.weather import router as weather_router
+from app.api.routes.auth import router as auth_router
+
+app = FastAPI(
+    title="NER-RESQ Smart Logistics API",
+    description="AI-powered logistics and accessibility intelligence platform for NER",
+    version="1.0.0"
+)
+
+@app.get("/")
+def root():
+    return {
+        "message": "NER-RESQ Backend is running",
+        "status": "online"
+    }
+
+@app.get("/health")
+def health():
+    return {
+        "status": "healthy"
+    }
+
+app.include_router(routes_router)
+app.include_router(locations_router)
+app.include_router(incidents_router)
+app.include_router(vehicles_router)
+app.include_router(trips_router)
+app.include_router(dashboard_router)
+app.include_router(alerts_router)
+app.include_router(weather_router)
+app.include_router(auth_router)

@@ -8,9 +8,13 @@ import pandas as pd
 
 from condition_engine import build_route_conditions
 
+from pathlib import Path
 
-ROAD_NETWORK_PATH = "data/road_network/01_road_network.csv"
-MODEL_PATH = "models/road_risk_model.pkl"
+ML_MODEL_DIR = Path(__file__).resolve().parents[1]
+
+ROAD_NETWORK_PATH = ML_MODEL_DIR / "data" / "road_network" / "01_road_network.csv"
+
+MODEL_PATH = ML_MODEL_DIR / "models" / "road_risk_model.pkl"
 
 K_ROUTES = 5
 LOW_THRESHOLD = 0.40
