@@ -1,18 +1,26 @@
+
 from datetime import datetime, timezone
 import uuid
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
-from typing import Optional
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.vehicle import Vehicle
 
 
-router = APIRouter(prefix="/api/vehicles", tags=["Vehicles"])
+router = APIRouter(
+    prefix="/api/vehicles",
+    tags=["Vehicles"]
+)
 
+
+# ---------------------------------------------------------
+# REQUEST SCHEMAS
+# ---------------------------------------------------------
 
 class VehicleCreate(BaseModel):
     vehicle_type: str = Field(..., min_length=1)
@@ -27,12 +35,26 @@ class VehicleCreate(BaseModel):
 
 class GPSUpdate(BaseModel):
     current_location: Optional[str] = None
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
+    latitude: Optional[float] = Field(
+        default=None,
+        ge=-90,
+        le=90
+    )
+    longitude: Optional[float] = Field(
+        default=None,
+        ge=-180,
+        le=180
+    )
     current_road_id: Optional[str] = None
-    speed: Optional[float] = None
-    status: Optional[str] = None
+    speed: Optional[float] = Field(
+        default=None,
+        ge=0
+    )
 
+
+# ---------------------------------------------------------
+# CREATE VEHICLE
+# ---------------------------------------------------------
 
 @router.post("")
 def create_vehicle(
@@ -73,12 +95,20 @@ def create_vehicle(
     }
 
 
+# ---------------------------------------------------------
+# GET ALL VEHICLES
+# ---------------------------------------------------------
+
 @router.get("")
 def get_vehicles(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    vehicles = db.query(Vehicle).order_by(Vehicle.created_at.desc()).all()
+    vehicles = (
+        db.query(Vehicle)
+        .order_by(Vehicle.created_at.desc())
+        .all()
+    )
 
     return {
         "success": True,
@@ -107,6 +137,10 @@ def get_vehicles(
     }
 
 
+# ---------------------------------------------------------
+# GET SINGLE VEHICLE
+# ---------------------------------------------------------
+
 @router.get("/{vehicle_id}")
 def get_vehicle(
     vehicle_id: str,
@@ -120,7 +154,10 @@ def get_vehicle(
     )
 
     if not vehicle:
-        raise HTTPException(status_code=404, detail="Vehicle not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Vehicle not found"
+        )
 
     return {
         "success": True,
@@ -145,6 +182,10 @@ def get_vehicle(
     }
 
 
+# ---------------------------------------------------------
+# UPDATE VEHICLE GPS
+# ---------------------------------------------------------
+
 @router.patch("/{vehicle_id}/gps")
 def update_vehicle_gps(
     vehicle_id: str,
@@ -159,7 +200,14 @@ def update_vehicle_gps(
     )
 
     if not vehicle:
-        raise HTTPException(status_code=404, detail="Vehicle not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Vehicle not found"
+        )
+
+    # -----------------------------------------------------
+    # Update location
+    # -----------------------------------------------------
 
     if gps.current_location is not None:
         vehicle.current_location = gps.current_location
@@ -176,10 +224,23 @@ def update_vehicle_gps(
     if gps.speed is not None:
         vehicle.speed = gps.speed
 
-    if gps.status is not None:
-        vehicle.status = gps.status.upper()
+    # -----------------------------------------------------
+    # IMPORTANT:
+    # Vehicle status is NOT changed here.
+    #
+    # Trip endpoints are responsible for:
+    # AVAILABLE
+    # ASSIGNED
+    # IN_TRANSIT
+    # COMPLETED
+    #
+    # This prevents a GPS request from accidentally
+    # changing the vehicle's trip state.
+    # -----------------------------------------------------
 
-    vehicle.last_gps_update = datetime.now(timezone.utc).replace(tzinfo=None)
+    vehicle.last_gps_update = (
+        datetime.now(timezone.utc).replace(tzinfo=None)
+    )
 
     db.commit()
     db.refresh(vehicle)
@@ -195,6 +256,7 @@ def update_vehicle_gps(
             "current_road_id": vehicle.current_road_id,
             "speed": vehicle.speed,
             "status": vehicle.status,
+            "active_trip_id": vehicle.active_trip_id,
             "last_gps_update": vehicle.last_gps_update.isoformat(),
         },
     }
