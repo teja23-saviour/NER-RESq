@@ -1,11 +1,14 @@
+
 from datetime import datetime, timezone
 import json
 import uuid
+from pathlib import Path
+from typing import Optional
 
+import pandas as pd
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
-from typing import Optional
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
@@ -14,15 +17,16 @@ from app.models.vehicle import Vehicle
 from app.models.incident import Incident
 from app.services.ml_service import predict_route
 
-from pathlib import Path
-import pandas as pd
-
 
 router = APIRouter(
     prefix="/api/trips",
     tags=["Trips"]
 )
 
+
+# ---------------------------------------------------------
+# LOCATION DATA
+# ---------------------------------------------------------
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
 
@@ -53,6 +57,10 @@ def find_location_node(location_name: str):
     return matches.iloc[0]["nearest_node"]
 
 
+# ---------------------------------------------------------
+# ACTIVE BLOCKED ROADS
+# ---------------------------------------------------------
+
 def get_active_blocked_roads(db: Session):
     active_incidents = (
         db.query(Incident)
@@ -67,6 +75,10 @@ def get_active_blocked_roads(db: Session):
     })
 
 
+# ---------------------------------------------------------
+# REQUEST SCHEMA
+# ---------------------------------------------------------
+
 class TripCreate(BaseModel):
     vehicle_id: str = Field(..., min_length=1)
     cargo_type: str = Field(..., min_length=1)
@@ -75,12 +87,20 @@ class TripCreate(BaseModel):
     destination_location: str = Field(..., min_length=1)
 
 
+# ---------------------------------------------------------
+# CREATE TRIP
+# ---------------------------------------------------------
+
 @router.post("")
 def create_trip(
     request: TripCreate,
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    # -----------------------------------------------------
+    # Find vehicle
+    # -----------------------------------------------------
+
     vehicle = (
         db.query(Vehicle)
         .filter(Vehicle.vehicle_id == request.vehicle_id)
@@ -93,11 +113,19 @@ def create_trip(
             detail=f"Vehicle '{request.vehicle_id}' not found"
         )
 
-    if vehicle.status == "IN_TRANSIT":
+    # -----------------------------------------------------
+    # Prevent duplicate active-trip assignment
+    # -----------------------------------------------------
+
+    if vehicle.active_trip_id or vehicle.status in {"ASSIGNED", "IN_TRANSIT"}:
         raise HTTPException(
             status_code=400,
             detail="Vehicle is already assigned to an active trip"
         )
+
+    # -----------------------------------------------------
+    # Find start and destination nodes
+    # -----------------------------------------------------
 
     start_node = find_location_node(request.start_location)
     destination_node = find_location_node(request.destination_location)
@@ -114,9 +142,21 @@ def create_trip(
             detail=f"Destination location '{request.destination_location}' not found"
         )
 
+    # -----------------------------------------------------
+    # Generate trip ID
+    # -----------------------------------------------------
+
     trip_id = f"TRIP-{uuid.uuid4().hex[:8].upper()}"
 
+    # -----------------------------------------------------
+    # Get active blocked roads
+    # -----------------------------------------------------
+
     blocked_roads = get_active_blocked_roads(db)
+
+    # -----------------------------------------------------
+    # ML route prediction
+    # -----------------------------------------------------
 
     try:
         route_result = predict_route(
@@ -131,6 +171,10 @@ def create_trip(
             detail=f"Route prediction failed: {str(e)}"
         )
 
+    # -----------------------------------------------------
+    # Extract route result
+    # -----------------------------------------------------
+
     data = route_result.get("data", route_result)
 
     recommended_route = data.get("recommended_route")
@@ -141,12 +185,21 @@ def create_trip(
             detail="Invalid route prediction response"
         )
 
+    # -----------------------------------------------------
+    # Extract route information
+    # -----------------------------------------------------
+
     risk_level = recommended_route.get("risk_level")
     risk_score = recommended_route.get("risk_probability")
     distance_km = recommended_route.get("distance_km")
+
     estimated_time_hours = recommended_route.get(
         "estimated_travel_time_hours"
     )
+
+    # -----------------------------------------------------
+    # Create database trip
+    # -----------------------------------------------------
 
     trip = Trip(
         trip_id=trip_id,
@@ -168,11 +221,19 @@ def create_trip(
 
     db.add(trip)
 
+    # -----------------------------------------------------
+    # Assign vehicle to trip
+    # -----------------------------------------------------
+
     vehicle.active_trip_id = trip_id
     vehicle.status = "ASSIGNED"
 
     db.commit()
     db.refresh(trip)
+
+    # -----------------------------------------------------
+    # Response
+    # -----------------------------------------------------
 
     return {
         "success": True,
@@ -195,6 +256,10 @@ def create_trip(
         }
     }
 
+
+# ---------------------------------------------------------
+# START TRIP
+# ---------------------------------------------------------
 
 @router.post("/{trip_id}/start")
 def start_trip(
@@ -232,6 +297,19 @@ def start_trip(
             detail="Vehicle assigned to this trip was not found"
         )
 
+    # -----------------------------------------------------
+    # Safety check before starting
+    # -----------------------------------------------------
+
+    if (
+        vehicle.active_trip_id
+        and vehicle.active_trip_id != trip.trip_id
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Vehicle is already assigned to another active trip"
+        )
+
     trip.status = "IN_TRANSIT"
     trip.started_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
@@ -253,6 +331,10 @@ def start_trip(
         }
     }
 
+
+# ---------------------------------------------------------
+# COMPLETE TRIP
+# ---------------------------------------------------------
 
 @router.post("/{trip_id}/complete")
 def complete_trip(
@@ -312,6 +394,10 @@ def complete_trip(
     }
 
 
+# ---------------------------------------------------------
+# GET ALL TRIPS
+# ---------------------------------------------------------
+
 @router.get("")
 def get_trips(
     current_user: dict = Depends(get_current_user),
@@ -344,6 +430,10 @@ def get_trips(
         ]
     }
 
+
+# ---------------------------------------------------------
+# GET SINGLE TRIP
+# ---------------------------------------------------------
 
 @router.get("/{trip_id}")
 def get_trip(
