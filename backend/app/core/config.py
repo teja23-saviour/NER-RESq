@@ -33,8 +33,14 @@ class Settings(BaseSettings):
             return [origin.strip() for origin in v_trimmed.split(",") if origin.strip()]
         return v
 
-    # Database
-    DATABASE_URL: str = "sqlite:///./ner_resq.db"
+    # Database Configuration (PostgreSQL + PostGIS default)
+    DATABASE_URL: str = (
+        "postgresql+psycopg2://postgres:password@localhost:5432/ner_resq"
+    )
+    DB_POOL_SIZE: int = 5
+    DB_MAX_OVERFLOW: int = 10
+    DB_POOL_TIMEOUT: int = 30
+    DB_ECHO: bool = False
 
     model_config = SettingsConfigDict(
         env_file=".env",

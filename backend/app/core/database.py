@@ -1,20 +1,29 @@
-from sqlalchemy import create_engine
+import logging
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from app.core.config import settings
 
-# SQLite requires check_same_thread=False for multi-threaded access
-connect_args = (
-    {"check_same_thread": False}
-    if settings.DATABASE_URL.startswith("sqlite")
-    else {}
-)
+logger = logging.getLogger(__name__)
 
-engine = create_engine(
-    settings.DATABASE_URL,
-    connect_args=connect_args,
-    echo=False,
-)
+# Configure engine options based on database dialect
+is_sqlite = settings.DATABASE_URL.startswith("sqlite")
+
+if is_sqlite:
+    engine = create_engine(
+        settings.DATABASE_URL,
+        connect_args={"check_same_thread": False},
+        echo=settings.DB_ECHO,
+    )
+else:
+    engine = create_engine(
+        settings.DATABASE_URL,
+        pool_pre_ping=True,
+        pool_size=settings.DB_POOL_SIZE,
+        max_overflow=settings.DB_MAX_OVERFLOW,
+        pool_timeout=settings.DB_POOL_TIMEOUT,
+        echo=settings.DB_ECHO,
+    )
 
 SessionLocal = sessionmaker(
     autocommit=False,
@@ -32,3 +41,40 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def check_database_health() -> dict:
+    """
+    Execute a lightweight query (SELECT 1) to verify database connectivity.
+    Returns status without exposing connection strings or credentials.
+    """
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return {
+            "status": "connected",
+            "message": "Database connection healthy",
+        }
+    except Exception as exc:
+        logger.debug("Database health check failed: %s", exc)
+        return {
+            "status": "unavailable",
+            "message": "Database connection unavailable",
+        }
+
+
+def init_db() -> bool:
+    """
+    Optional initialization utility.
+    Ensures PostGIS extension is active when connected to PostgreSQL.
+    Does NOT create application entity tables.
+    """
+    try:
+        with engine.connect() as conn:
+            if settings.DATABASE_URL.startswith("postgresql"):
+                conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
+                conn.commit()
+        return True
+    except Exception as exc:
+        logger.debug("Database initialization skipped / failed: %s", exc)
+        return False
