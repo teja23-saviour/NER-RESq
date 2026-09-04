@@ -39,6 +39,11 @@ env/
 .vscode/
 .idea/
 
+backend/venv/
+backend/.env
+__pycache__/
+*.pyc
+
 # OS
 .DS_Store
 Thumbs.db
