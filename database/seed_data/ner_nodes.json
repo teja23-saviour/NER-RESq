@@ -1,0 +1,132 @@
+[
+  {
+    "node_id": "node_guwahati",
+    "name": "Guwahati Central Supply Depot",
+    "state": "Assam",
+    "district": "Kamrup Metropolitan",
+    "node_type": "DEPOT",
+    "capacity": 5000,
+    "latitude": 26.1445,
+    "longitude": 91.7362
+  },
+  {
+    "node_id": "node_tezpur",
+    "name": "Tezpur Regional Relief Camp",
+    "state": "Assam",
+    "district": "Sonitpur",
+    "node_type": "RELIEF_CAMP",
+    "capacity": 1200,
+    "latitude": 26.6528,
+    "longitude": 92.7926
+  },
+  {
+    "node_id": "node_nagaon",
+    "name": "Nagaon Strategic Junction",
+    "state": "Assam",
+    "district": "Nagaon",
+    "node_type": "JUNCTION",
+    "capacity": null,
+    "latitude": 26.3452,
+    "longitude": 92.6840
+  },
+  {
+    "node_id": "node_lumding",
+    "name": "Lumding Transit Junction",
+    "state": "Assam",
+    "district": "Hojai",
+    "node_type": "JUNCTION",
+    "capacity": null,
+    "latitude": 25.7516,
+    "longitude": 93.1704
+  },
+  {
+    "node_id": "node_haflong",
+    "name": "Haflong Hill Junction",
+    "state": "Assam",
+    "district": "Dima Hasao",
+    "node_type": "JUNCTION",
+    "capacity": null,
+    "latitude": 25.1764,
+    "longitude": 93.0180
+  },
+  {
+    "node_id": "node_silchar",
+    "name": "Silchar Medical Referral Hospital",
+    "state": "Assam",
+    "district": "Cachar",
+    "node_type": "HOSPITAL",
+    "capacity": 800,
+    "latitude": 24.8170,
+    "longitude": 92.7993
+  },
+  {
+    "node_id": "node_shillong",
+    "name": "Shillong Mountain Supply Depot",
+    "state": "Meghalaya",
+    "district": "East Khasi Hills",
+    "node_type": "DEPOT",
+    "capacity": 3500,
+    "latitude": 25.5788,
+    "longitude": 91.8933
+  },
+  {
+    "node_id": "node_jowai",
+    "name": "Jowai Bypass Junction",
+    "state": "Meghalaya",
+    "district": "West Jaintia Hills",
+    "node_type": "JUNCTION",
+    "capacity": null,
+    "latitude": 25.4526,
+    "longitude": 92.2036
+  },
+  {
+    "node_id": "node_agartala",
+    "name": "Agartala Border Relief Depot",
+    "state": "Tripura",
+    "district": "West Tripura",
+    "node_type": "DEPOT",
+    "capacity": 3000,
+    "latitude": 23.8315,
+    "longitude": 91.2868
+  },
+  {
+    "node_id": "node_teliamura",
+    "name": "Teliamura Valley Junction",
+    "state": "Tripura",
+    "district": "Khowai",
+    "node_type": "JUNCTION",
+    "capacity": null,
+    "latitude": 23.8340,
+    "longitude": 91.6010
+  },
+  {
+    "node_id": "node_aizawl",
+    "name": "Aizawl Emergency Relief Camp",
+    "state": "Mizoram",
+    "district": "Aizawl",
+    "node_type": "RELIEF_CAMP",
+    "capacity": 1500,
+    "latitude": 23.7271,
+    "longitude": 92.7176
+  },
+  {
+    "node_id": "node_kolasib",
+    "name": "Kolasib Ridge Junction",
+    "state": "Mizoram",
+    "district": "Kolasib",
+    "node_type": "JUNCTION",
+    "capacity": null,
+    "latitude": 24.2255,
+    "longitude": 92.6781
+  },
+  {
+    "node_id": "node_itanagar",
+    "name": "Itanagar State Emergency Hospital",
+    "state": "Arunachal Pradesh",
+    "district": "Papum Pare",
+    "node_type": "HOSPITAL",
+    "capacity": 600,
+    "latitude": 27.0844,
+    "longitude": 93.6053
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "depot_name": "Guwahati Central Supply Depot",
+    "item_type": "RATIONS",
+    "quantity": 15000.0,
+    "unit": "food kits"
+  },
+  {
+    "depot_name": "Guwahati Central Supply Depot",
+    "item_type": "WATER",
+    "quantity": 50000.0,
+    "unit": "liters"
+  },
+  {
+    "depot_name": "Guwahati Central Supply Depot",
+    "item_type": "MEDICINE",
+    "quantity": 8000.0,
+    "unit": "first-aid kits"
+  },
+  {
+    "depot_name": "Guwahati Central Supply Depot",
+    "item_type": "RESCUE_BOATS",
+    "quantity": 45.0,
+    "unit": "inflatable motorized boats"
+  },
+  {
+    "depot_name": "Shillong Mountain Supply Depot",
+    "item_type": "RATIONS",
+    "quantity": 8000.0,
+    "unit": "food kits"
+  },
+  {
+    "depot_name": "Shillong Mountain Supply Depot",
+    "item_type": "WATER",
+    "quantity": 25000.0,
+    "unit": "liters"
+  },
+  {
+    "depot_name": "Shillong Mountain Supply Depot",
+    "item_type": "MEDICINE",
+    "quantity": 4000.0,
+    "unit": "first-aid kits"
+  },
+  {
+    "depot_name": "Shillong Mountain Supply Depot",
+    "item_type": "RESCUE_BOATS",
+    "quantity": 10.0,
+    "unit": "inflatable motorized boats"
+  },
+  {
+    "depot_name": "Agartala Border Relief Depot",
+    "item_type": "RATIONS",
+    "quantity": 6000.0,
+    "unit": "food kits"
+  },
+  {
+    "depot_name": "Agartala Border Relief Depot",
+    "item_type": "WATER",
+    "quantity": 20000.0,
+    "unit": "liters"
+  },
+  {
+    "depot_name": "Agartala Border Relief Depot",
+    "item_type": "MEDICINE",
+    "quantity": 3000.0,
+    "unit": "first-aid kits"
+  },
+  {
+    "depot_name": "Agartala Border Relief Depot",
+    "item_type": "RESCUE_BOATS",
+    "quantity": 25.0,
+    "unit": "inflatable motorized boats"
+  }
+]
