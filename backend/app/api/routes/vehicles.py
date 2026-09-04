@@ -260,3 +260,46 @@ def update_vehicle_gps(
             "last_gps_update": vehicle.last_gps_update.isoformat(),
         },
     }
+
+@router.get("/{vehicle_id}/monitor")
+def monitor_vehicle(
+    vehicle_id: str,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    vehicle = (
+        db.query(Vehicle)
+        .filter(Vehicle.vehicle_id == vehicle_id)
+        .first()
+    )
+
+    if not vehicle:
+        raise HTTPException(
+            status_code=404,
+            detail="Vehicle not found"
+        )
+
+    gps_available = vehicle.last_gps_update is not None
+
+    return {
+        "success": True,
+        "vehicle": {
+            "vehicle_id": vehicle.vehicle_id,
+            "vehicle_type": vehicle.vehicle_type,
+            "driver_name": vehicle.driver_name,
+            "cargo_type": vehicle.cargo_type,
+            "status": vehicle.status,
+            "active_trip_id": vehicle.active_trip_id,
+            "current_location": vehicle.current_location,
+            "latitude": vehicle.latitude,
+            "longitude": vehicle.longitude,
+            "current_road_id": vehicle.current_road_id,
+            "speed": vehicle.speed,
+            "last_gps_update": (
+                vehicle.last_gps_update.isoformat()
+                if vehicle.last_gps_update
+                else None
+            ),
+            "gps_available": gps_available
+        }
+    }

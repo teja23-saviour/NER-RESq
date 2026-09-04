@@ -668,3 +668,139 @@ def get_trip(
         }
     }
 
+@router.get("/{trip_id}/monitor")
+def monitor_trip(
+    trip_id: str,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    """
+    Monitor a trip and detect route deviation using the vehicle's
+    current road and the ML-recommended route.
+    """
+
+    trip = db.query(Trip).filter(Trip.trip_id == trip_id).first()
+
+    if not trip:
+        raise HTTPException(status_code=404, detail="Trip not found")
+
+    vehicle = (
+        db.query(Vehicle)
+        .filter(Vehicle.vehicle_id == trip.vehicle_id)
+        .first()
+    )
+
+    if not vehicle:
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+
+    # Trip has not started yet
+    if trip.status == "PLANNED":
+        return {
+            "trip_id": trip.trip_id,
+            "status": trip.status,
+            "monitor_status": "NOT_STARTED",
+            "message": "Trip has not started yet",
+            "vehicle_id": vehicle.vehicle_id,
+            "current_road_id": vehicle.current_road_id,
+            "recommended_road_ids": [],
+            "route_deviation": False,
+        }
+
+    # Extract recommended road IDs from stored ML route
+    recommended_road_ids = []
+
+    if trip.recommended_route:
+        try:
+            route_data = json.loads(trip.recommended_route)
+
+            if isinstance(route_data, dict):
+                recommended_road_ids = route_data.get("road_ids", [])
+
+        except (json.JSONDecodeError, TypeError):
+            recommended_road_ids = []
+
+    # GPS has not provided a road yet
+    if not vehicle.current_road_id:
+        return {
+            "trip_id": trip.trip_id,
+            "status": trip.status,
+            "monitor_status": "GPS_UNAVAILABLE",
+            "message": "Vehicle current road is not available",
+            "vehicle_id": vehicle.vehicle_id,
+            "current_road_id": None,
+            "recommended_road_ids": recommended_road_ids,
+            "route_deviation": False,
+        }
+
+    current_road = vehicle.current_road_id
+
+    # Check whether vehicle is following recommended route
+    is_on_route = current_road in recommended_road_ids
+
+    if is_on_route:
+        monitor_status = "ON_ROUTE"
+        message = "Vehicle is following the recommended route"
+    else:
+        monitor_status = "ROUTE_DEVIATION"
+        message = "Vehicle has deviated from the recommended route"
+
+    return {
+        "trip_id": trip.trip_id,
+        "status": trip.status,
+        "monitor_status": monitor_status,
+        "message": message,
+        "vehicle_id": vehicle.vehicle_id,
+        "current_location": vehicle.current_location,
+        "latitude": vehicle.latitude,
+        "longitude": vehicle.longitude,
+        "current_road_id": current_road,
+        "recommended_road_ids": recommended_road_ids,
+        "route_deviation": not is_on_route,
+        "speed": vehicle.speed,
+        "last_gps_update": vehicle.last_gps_update,
+    }
+@router.post("/{trip_id}/cancel")
+def cancel_trip(
+    trip_id: str,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    trip = db.query(Trip).filter(Trip.trip_id == trip_id).first()
+
+    if not trip:
+        raise HTTPException(status_code=404, detail="Trip not found")
+
+    vehicle = (
+        db.query(Vehicle)
+        .filter(Vehicle.vehicle_id == trip.vehicle_id)
+        .first()
+    )
+
+    if trip.status == "COMPLETED":
+        raise HTTPException(
+            status_code=400,
+            detail="Completed trip cannot be cancelled",
+        )
+
+    if trip.status == "CANCELLED":
+        raise HTTPException(
+            status_code=400,
+            detail="Trip is already cancelled",
+        )
+
+    trip.status = "CANCELLED"
+
+    if vehicle:
+        vehicle.status = "AVAILABLE"
+        vehicle.active_trip_id = None
+
+    db.commit()
+    db.refresh(trip)
+
+    return {
+        "message": "Trip cancelled successfully",
+        "trip_id": trip.trip_id,
+        "status": trip.status,
+        "vehicle_id": trip.vehicle_id,
+        "vehicle_status": vehicle.status if vehicle else None,
+    }
