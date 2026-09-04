@@ -63,18 +63,21 @@ def check_database_health() -> dict:
         }
 
 
-def init_db() -> bool:
+def init_db(create_tables: bool = False) -> bool:
     """
     Optional initialization utility.
     Ensures PostGIS extension is active when connected to PostgreSQL.
-    Does NOT create application entity tables.
+    Optionally creates registered tables (create_all is non-destructive).
     """
     try:
         with engine.connect() as conn:
             if settings.DATABASE_URL.startswith("postgresql"):
                 conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
                 conn.commit()
+        if create_tables:
+            Base.metadata.create_all(bind=engine)
         return True
     except Exception as exc:
         logger.debug("Database initialization skipped / failed: %s", exc)
         return False
+
