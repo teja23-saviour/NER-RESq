@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
 from pathlib import Path
 
 import pandas as pd
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -11,11 +11,19 @@ from app.schemas.route import RouteRequest
 from app.services.ml_service import predict_route
 
 
+# =========================================================
+# ROUTER
+# =========================================================
+
 router = APIRouter(
     prefix="/api/routes",
     tags=["Routes"]
 )
 
+
+# =========================================================
+# PROJECT PATHS
+# =========================================================
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
 
@@ -27,8 +35,17 @@ LOCATION_FILE = (
     / "ner_locations.csv"
 )
 
+
+# =========================================================
+# LOAD LOCATIONS
+# =========================================================
+
 locations_df = pd.read_csv(LOCATION_FILE)
 
+
+# =========================================================
+# LOCATION RESOLUTION
+# =========================================================
 
 def find_location_node(location_name: str):
     search = location_name.strip().lower()
@@ -46,8 +63,14 @@ def find_location_node(location_name: str):
     return matches.iloc[0]["nearest_node"]
 
 
+# =========================================================
+# ACTIVE BLOCKED ROADS
+# =========================================================
+
 def get_active_blocked_roads(db: Session):
-    """Get road IDs from all currently active incidents."""
+    """
+    Get road IDs from all currently active incidents.
+    """
 
     active_incidents = (
         db.query(Incident)
@@ -64,6 +87,10 @@ def get_active_blocked_roads(db: Session):
     return list(set(blocked_roads))
 
 
+# =========================================================
+# ROUTE PLANNING
+# =========================================================
+
 @router.post("/plan")
 def plan_route(
     request: RouteRequest,
@@ -71,28 +98,62 @@ def plan_route(
     db: Session = Depends(get_db)
 ):
 
-    start_node = find_location_node(request.start_location)
-    destination_node = find_location_node(request.destination_location)
+    # -----------------------------------------------------
+    # RESOLVE START LOCATION
+    # -----------------------------------------------------
+
+    start_node = find_location_node(
+        request.start_location
+    )
 
     if not start_node:
         raise HTTPException(
             status_code=404,
-            detail=f"Start location '{request.start_location}' not found"
+            detail=(
+                f"Start location "
+                f"'{request.start_location}' not found"
+            )
         )
+
+    # -----------------------------------------------------
+    # RESOLVE DESTINATION
+    # -----------------------------------------------------
+
+    destination_node = find_location_node(
+        request.destination_location
+    )
 
     if not destination_node:
         raise HTTPException(
             status_code=404,
-            detail=f"Destination location '{request.destination_location}' not found"
+            detail=(
+                f"Destination location "
+                f"'{request.destination_location}' not found"
+            )
         )
 
-    active_blocked_roads = get_active_blocked_roads(db)
+    # -----------------------------------------------------
+    # GET ACTIVE INCIDENT BLOCKAGES
+    # -----------------------------------------------------
 
-    requested_blocked_roads = request.blocked_roads or []
+    active_blocked_roads = (
+        get_active_blocked_roads(db)
+    )
+
+    requested_blocked_roads = (
+        request.blocked_roads or []
+    )
 
     blocked_roads = list(
-        set(requested_blocked_roads + active_blocked_roads)
+        set(
+            requested_blocked_roads
+            + active_blocked_roads
+        )
     )
+
+    # -----------------------------------------------------
+    # ML ROUTE PREDICTION
+    # -----------------------------------------------------
 
     try:
         result = predict_route(
@@ -105,18 +166,95 @@ def plan_route(
             risk_overrides=request.risk_overrides,
         )
 
-        return {
-            "success": True,
-            "start_location": request.start_location,
-            "destination_location": request.destination_location,
-            "start_node": start_node,
-            "destination_node": destination_node,
-            "active_blocked_roads": active_blocked_roads,
-            "data": result
-        }
-
     except Exception as e:
         raise HTTPException(
             status_code=500,
-            detail=f"Route prediction failed: {str(e)}"
+            detail=(
+                f"Route prediction failed: {str(e)}"
+            )
         )
+
+    # -----------------------------------------------------
+    # EXTRACT AI RESULT
+    # -----------------------------------------------------
+
+    recommended_route = result.get(
+        "recommended_route",
+        {}
+    )
+
+    risk_probability = recommended_route.get(
+        "risk_probability"
+    )
+
+    risk_level = recommended_route.get(
+        "risk_level"
+    )
+
+    route_status = result.get(
+        "route_status"
+    )
+
+    # -----------------------------------------------------
+    # AI DECISION SUMMARY
+    # -----------------------------------------------------
+
+    if risk_level == "HIGH":
+        recommendation = "CAUTION"
+
+        reason = (
+            "The recommended route currently has "
+            "high predicted logistics risk."
+        )
+
+    elif risk_level == "MEDIUM":
+        recommendation = "MONITOR"
+
+        reason = (
+            "The recommended route has moderate "
+            "predicted logistics risk."
+        )
+
+    else:
+        recommendation = "PROCEED"
+
+        reason = (
+            "The recommended route is currently "
+            "within the acceptable predicted risk range."
+        )
+
+    ai_decision = {
+        "risk_level": risk_level,
+        "risk_probability": risk_probability,
+        "route_status": route_status,
+        "recommendation": recommendation,
+        "reason": reason,
+    }
+
+    # -----------------------------------------------------
+    # RESPONSE
+    # -----------------------------------------------------
+
+    return {
+        "success": True,
+
+        "start_location": (
+            request.start_location
+        ),
+
+        "destination_location": (
+            request.destination_location
+        ),
+
+        "start_node": start_node,
+
+        "destination_node": destination_node,
+
+        "active_blocked_roads": (
+            active_blocked_roads
+        ),
+
+        "ai_decision": ai_decision,
+
+        "data": result
+    }
