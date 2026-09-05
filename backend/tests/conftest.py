@@ -22,7 +22,6 @@ from app.models.incident import Incident
 
 load_dotenv(".env.test", override=True)
 
-
 DB_USER = os.getenv("DB_USER", "root")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 DB_HOST = os.getenv("DB_HOST", "localhost")
@@ -30,8 +29,6 @@ DB_PORT = os.getenv("DB_PORT", "3306")
 DB_NAME = os.getenv("DB_NAME", "ner_resq_test")
 
 
-# Password must be URL-encoded because it may contain
-# characters such as @, #, %, :, /, etc.
 TEST_DATABASE_URL = (
     f"mysql+pymysql://{quote_plus(DB_USER)}:"
     f"{quote_plus(DB_PASSWORD)}@"
@@ -41,34 +38,26 @@ TEST_DATABASE_URL = (
 
 test_engine = create_engine(
     TEST_DATABASE_URL,
-    pool_pre_ping=True
+    pool_pre_ping=True,
 )
-
 
 TestSessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
-    bind=test_engine
+    bind=test_engine,
 )
-
 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
-    deprecated="auto"
+    deprecated="auto",
 )
 
 
 # =========================================================
-# HELPERS
+# TIME HELPER
 # =========================================================
 
 def utc_now_naive():
-    """
-    Return current UTC time as a naive datetime.
-
-    The application models use SQLAlchemy DateTime columns
-    without timezone information.
-    """
     return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
@@ -84,7 +73,7 @@ def seed_test_database():
 
     try:
         # =================================================
-        # ADMIN USER
+        # ADMIN
         # =================================================
 
         admin = (
@@ -98,13 +87,15 @@ def seed_test_database():
                 user_id="USR-TEST-ADMIN",
                 username="admin",
                 email="admin@test.nerresq.com",
-                password_hash=pwd_context.hash("Admin@123"),
+                password_hash=pwd_context.hash(
+                    "Admin@123"
+                ),
                 role="ADMIN",
             )
             db.add(admin)
 
         # =================================================
-        # OPERATOR USER
+        # OPERATOR
         # =================================================
 
         operator = (
@@ -126,7 +117,7 @@ def seed_test_database():
             db.add(operator)
 
         # =================================================
-        # DRIVER USER
+        # DRIVER
         # =================================================
 
         driver = (
@@ -151,7 +142,7 @@ def seed_test_database():
         db.flush()
 
         # =================================================
-        # TEST VEHICLE
+        # MAIN TEST VEHICLE
         # =================================================
 
         vehicle = (
@@ -182,7 +173,7 @@ def seed_test_database():
         db.flush()
 
         # =================================================
-        # TEST TRIP
+        # MAIN TEST TRIP
         # =================================================
 
         trip = (
@@ -207,14 +198,14 @@ def seed_test_database():
                     "road_ids": [
                         "R00016",
                         "R00017",
-                        "R00018"
+                        "R00018",
                     ],
                     "risk_probability": 0.80,
                     "risk_level": "HIGH",
                     "distance_km": 368.6,
                     "estimated_travel_time_hours": 13.47,
                     "additional_distance_km": 0.0,
-                    "estimated_delay_hours": 0.0
+                    "estimated_delay_hours": 0.0,
                 }),
                 risk_level="HIGH",
                 risk_score=0.80,
@@ -225,6 +216,40 @@ def seed_test_database():
             )
             db.add(trip)
 
+        db.flush()
+
+        # =================================================
+        # LIFECYCLE TEST VEHICLE
+        # =================================================
+
+        lifecycle_vehicle = (
+            db.query(Vehicle)
+            .filter(
+                Vehicle.vehicle_id
+                == "VEH-TEST-LIFECYCLE"
+            )
+            .first()
+        )
+
+        if not lifecycle_vehicle:
+            lifecycle_vehicle = Vehicle(
+                vehicle_id="VEH-TEST-LIFECYCLE",
+                vehicle_type="Truck",
+                driver_name="Lifecycle Test Driver",
+                cargo_type="Medicine",
+                current_location="Tawang",
+                latitude=27.59,
+                longitude=93.40,
+                current_road_id="R00016",
+                speed=0.0,
+                status="AVAILABLE",
+                active_trip_id=None,
+                last_gps_update=None,
+            )
+            db.add(lifecycle_vehicle)
+
+        db.flush()
+
         # =================================================
         # TEST INCIDENT
         # =================================================
@@ -232,7 +257,8 @@ def seed_test_database():
         incident = (
             db.query(Incident)
             .filter(
-                Incident.incident_id == "INC-61050043"
+                Incident.incident_id
+                == "INC-61050043"
             )
             .first()
         )
@@ -267,5 +293,5 @@ def seed_test_database():
 def test_base_url():
     return os.getenv(
         "TEST_BASE_URL",
-        "http://127.0.0.1:8000"
+        "http://127.0.0.1:8000",
     )
