@@ -12,6 +12,7 @@ def get_admin_token(test_base_url):
     )
 
     assert response.status_code == 200
+
     return response.json()["data"]["access_token"]
 
 
@@ -71,3 +72,20 @@ def test_route_planning_unknown_location(test_base_url):
 
     assert response.status_code == 404
     assert "not found" in response.json()["detail"].lower()
+
+
+def test_ml_status(test_base_url):
+    response = requests.get(
+        f"{test_base_url}/api/ml/status",
+        timeout=10,
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["success"] is True
+    assert data["data"]["model_status"] == "READY"
+    assert data["data"]["model_exists"] is True
+    assert data["data"]["framework"] == "scikit-learn"
+    assert data["data"]["model_file"] == "road_risk_model.pkl"

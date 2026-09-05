@@ -1,7 +1,10 @@
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.core.logging.config import setup_logging
-import logging
+
 from app.api.routes.incidents import router as incidents_router
 from app.api.routes.routes import router as routes_router
 from app.api.routes.locations import router as locations_router
@@ -11,12 +14,22 @@ from app.api.routes.dashboard import router as dashboard_router
 from app.api.routes.alerts import router as alerts_router
 from app.api.routes.weather import router as weather_router
 from app.api.routes.auth import router as auth_router
+from app.api.routes.ml import router as ml_router
+
+
+# =========================================================
+# LOGGING
+# =========================================================
 
 setup_logging()
 
-
 logger = logging.getLogger("ner_resq")
 logger.info("NER-RESQ backend application initialized")
+
+
+# =========================================================
+# APPLICATION
+# =========================================================
 
 app = FastAPI(
     title="NER-RESQ Smart Logistics API",
@@ -66,7 +79,7 @@ def health():
 
 
 # =========================================================
-# ROUTERS
+# API ROUTERS
 # =========================================================
 
 app.include_router(routes_router)
@@ -78,3 +91,4 @@ app.include_router(dashboard_router)
 app.include_router(alerts_router)
 app.include_router(weather_router)
 app.include_router(auth_router)
+app.include_router(ml_router)
