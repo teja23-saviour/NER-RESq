@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes.incidents import router as incidents_router
 from app.api.routes.routes import router as routes_router
@@ -10,11 +11,38 @@ from app.api.routes.alerts import router as alerts_router
 from app.api.routes.weather import router as weather_router
 from app.api.routes.auth import router as auth_router
 
+
 app = FastAPI(
     title="NER-RESQ Smart Logistics API",
-    description="AI-powered logistics and accessibility intelligence platform for NER",
+    description=(
+        "AI-powered logistics and accessibility "
+        "intelligence platform for NER"
+    ),
     version="1.0.0"
 )
+
+
+# =========================================================
+# CORS
+# =========================================================
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# =========================================================
+# ROOT
+# =========================================================
 
 @app.get("/")
 def root():
@@ -23,11 +51,17 @@ def root():
         "status": "online"
     }
 
+
 @app.get("/health")
 def health():
     return {
         "status": "healthy"
     }
+
+
+# =========================================================
+# ROUTERS
+# =========================================================
 
 app.include_router(routes_router)
 app.include_router(locations_router)
