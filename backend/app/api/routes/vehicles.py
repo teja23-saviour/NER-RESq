@@ -1,4 +1,3 @@
-
 from datetime import datetime, timezone
 import uuid
 from typing import Optional
@@ -10,6 +9,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.vehicle import Vehicle
+from app.models.user import User
 
 
 router = APIRouter(
@@ -18,43 +18,24 @@ router = APIRouter(
 )
 
 
-# ---------------------------------------------------------
-# REQUEST SCHEMAS
-# ---------------------------------------------------------
-
 class VehicleCreate(BaseModel):
     vehicle_type: str = Field(..., min_length=1)
     driver_name: Optional[str] = None
     cargo_type: Optional[str] = None
     current_location: Optional[str] = None
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
+    latitude: Optional[float] = Field(default=None, ge=-90, le=90)
+    longitude: Optional[float] = Field(default=None, ge=-180, le=180)
     current_road_id: Optional[str] = None
-    speed: Optional[float] = None
+    speed: Optional[float] = Field(default=None, ge=0)
 
 
 class GPSUpdate(BaseModel):
     current_location: Optional[str] = None
-    latitude: Optional[float] = Field(
-        default=None,
-        ge=-90,
-        le=90
-    )
-    longitude: Optional[float] = Field(
-        default=None,
-        ge=-180,
-        le=180
-    )
+    latitude: Optional[float] = Field(default=None, ge=-90, le=90)
+    longitude: Optional[float] = Field(default=None, ge=-180, le=180)
     current_road_id: Optional[str] = None
-    speed: Optional[float] = Field(
-        default=None,
-        ge=0
-    )
+    speed: Optional[float] = Field(default=None, ge=0)
 
-
-# ---------------------------------------------------------
-# CREATE VEHICLE
-# ---------------------------------------------------------
 
 @router.post("")
 def create_vehicle(
@@ -62,6 +43,14 @@ def create_vehicle(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    role = str(current_user.get("role", "")).upper()
+
+    if role not in {"ADMIN", "OPERATOR"}:
+        raise HTTPException(
+            status_code=403,
+            detail="Operator or administrator access required"
+        )
+
     vehicle_id = f"VEH-{uuid.uuid4().hex[:8].upper()}"
 
     new_vehicle = Vehicle(
@@ -94,10 +83,6 @@ def create_vehicle(
         },
     }
 
-
-# ---------------------------------------------------------
-# GET ALL VEHICLES
-# ---------------------------------------------------------
 
 @router.get("")
 def get_vehicles(
@@ -136,10 +121,6 @@ def get_vehicles(
         ],
     }
 
-
-# ---------------------------------------------------------
-# GET SINGLE VEHICLE
-# ---------------------------------------------------------
 
 @router.get("/{vehicle_id}")
 def get_vehicle(
@@ -182,10 +163,6 @@ def get_vehicle(
     }
 
 
-# ---------------------------------------------------------
-# UPDATE VEHICLE GPS
-# ---------------------------------------------------------
-
 @router.patch("/{vehicle_id}/gps")
 def update_vehicle_gps(
     vehicle_id: str,
@@ -205,9 +182,38 @@ def update_vehicle_gps(
             detail="Vehicle not found"
         )
 
-    # -----------------------------------------------------
-    # Update location
-    # -----------------------------------------------------
+    role = str(current_user.get("role", "")).upper()
+
+    # ADMIN and OPERATOR can update any vehicle.
+    if role in {"ADMIN", "OPERATOR"}:
+        authorized = True
+
+    # DRIVER can update only their assigned vehicle.
+    elif role == "DRIVER":
+        user = (
+            db.query(User)
+            .filter(
+                User.user_id == current_user.get("user_id")
+            )
+            .first()
+        )
+
+        if not user:
+            raise HTTPException(
+                status_code=401,
+                detail="Authenticated user not found"
+            )
+
+        authorized = user.vehicle_id == vehicle.vehicle_id
+
+    else:
+        authorized = False
+
+    if not authorized:
+        raise HTTPException(
+            status_code=403,
+            detail="You are not authorized to update this vehicle"
+        )
 
     if gps.current_location is not None:
         vehicle.current_location = gps.current_location
@@ -223,20 +229,6 @@ def update_vehicle_gps(
 
     if gps.speed is not None:
         vehicle.speed = gps.speed
-
-    # -----------------------------------------------------
-    # IMPORTANT:
-    # Vehicle status is NOT changed here.
-    #
-    # Trip endpoints are responsible for:
-    # AVAILABLE
-    # ASSIGNED
-    # IN_TRANSIT
-    # COMPLETED
-    #
-    # This prevents a GPS request from accidentally
-    # changing the vehicle's trip state.
-    # -----------------------------------------------------
 
     vehicle.last_gps_update = (
         datetime.now(timezone.utc).replace(tzinfo=None)
@@ -260,6 +252,7 @@ def update_vehicle_gps(
             "last_gps_update": vehicle.last_gps_update.isoformat(),
         },
     }
+
 
 @router.get("/{vehicle_id}/monitor")
 def monitor_vehicle(

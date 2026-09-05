@@ -1,4 +1,3 @@
-
 from datetime import datetime, timezone
 import json
 import uuid
@@ -11,10 +10,14 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.dependencies import get_current_user
+from app.core.dependencies import (
+    get_current_user,
+    verify_driver_vehicle_access,
+)
 from app.models.trip import Trip
 from app.models.vehicle import Vehicle
 from app.models.incident import Incident
+from app.models.user import User
 from app.services.ml_service import predict_route
 
 
@@ -80,13 +83,6 @@ def find_location_node(location_name: str):
 # =========================================================
 
 def find_current_node(current_road_id: str):
-    """
-    Determine the current node from the vehicle's current road.
-
-    For the prototype we use the road's to_node as the
-    vehicle's current node.
-    """
-
     if not current_road_id:
         return None
 
@@ -103,6 +99,10 @@ def find_current_node(current_road_id: str):
     return str(matches.iloc[0]["to_node"])
 
 
+# =========================================================
+# ACTIVE BLOCKED ROADS
+# =========================================================
+
 def get_active_blocked_roads(db: Session):
     active_incidents = (
         db.query(Incident)
@@ -115,6 +115,47 @@ def get_active_blocked_roads(db: Session):
         for incident in active_incidents
         if incident.road_id
     })
+
+
+# =========================================================
+# DRIVER ACCESS HELPER
+# =========================================================
+
+def check_trip_access(
+    current_user: dict,
+    trip: Trip,
+    db: Session
+):
+    """
+    ADMIN and OPERATOR can access any trip.
+    DRIVER can access only trips belonging to
+    their assigned vehicle.
+    """
+
+    user = (
+        db.query(User)
+        .filter(
+            User.user_id == current_user.get("user_id")
+        )
+        .first()
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Authenticated user not found"
+        )
+
+    if not verify_driver_vehicle_access(
+        user,
+        trip.vehicle_id
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail="You are not authorized to access this trip"
+        )
+
+    return user
 
 
 # =========================================================
@@ -139,6 +180,23 @@ def create_trip(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    role = str(
+        current_user.get("role", "")
+    ).upper()
+
+    # Drivers cannot create trips.
+    if role == "DRIVER":
+        raise HTTPException(
+            status_code=403,
+            detail="Driver cannot create trips"
+        )
+
+    if role not in {"ADMIN", "OPERATOR"}:
+        raise HTTPException(
+            status_code=403,
+            detail="Operator or administrator access required"
+        )
+
     vehicle = (
         db.query(Vehicle)
         .filter(Vehicle.vehicle_id == request.vehicle_id)
@@ -151,7 +209,6 @@ def create_trip(
             detail=f"Vehicle '{request.vehicle_id}' not found"
         )
 
-    # Prevent duplicate active-trip assignment.
     if vehicle.active_trip_id or vehicle.status in {
         "ASSIGNED",
         "IN_TRANSIT"
@@ -161,13 +218,21 @@ def create_trip(
             detail="Vehicle is already assigned to an active trip"
         )
 
-    start_node = find_location_node(request.start_location)
-    destination_node = find_location_node(request.destination_location)
+    start_node = find_location_node(
+        request.start_location
+    )
+
+    destination_node = find_location_node(
+        request.destination_location
+    )
 
     if not start_node:
         raise HTTPException(
             status_code=404,
-            detail=f"Start location '{request.start_location}' not found"
+            detail=(
+                f"Start location "
+                f"'{request.start_location}' not found"
+            )
         )
 
     if not destination_node:
@@ -179,7 +244,9 @@ def create_trip(
             )
         )
 
-    trip_id = f"TRIP-{uuid.uuid4().hex[:8].upper()}"
+    trip_id = (
+        f"TRIP-{uuid.uuid4().hex[:8].upper()}"
+    )
 
     blocked_roads = get_active_blocked_roads(db)
 
@@ -196,9 +263,14 @@ def create_trip(
             detail=f"Route prediction failed: {str(e)}"
         )
 
-    data = route_result.get("data", route_result)
+    data = route_result.get(
+        "data",
+        route_result
+    )
 
-    recommended_route = data.get("recommended_route")
+    recommended_route = data.get(
+        "recommended_route"
+    )
 
     if not isinstance(recommended_route, dict):
         raise HTTPException(
@@ -206,9 +278,17 @@ def create_trip(
             detail="Invalid route prediction response"
         )
 
-    risk_level = recommended_route.get("risk_level")
-    risk_score = recommended_route.get("risk_probability")
-    distance_km = recommended_route.get("distance_km")
+    risk_level = recommended_route.get(
+        "risk_level"
+    )
+
+    risk_score = recommended_route.get(
+        "risk_probability"
+    )
+
+    distance_km = recommended_route.get(
+        "distance_km"
+    )
 
     estimated_time_hours = recommended_route.get(
         "estimated_travel_time_hours"
@@ -223,13 +303,18 @@ def create_trip(
         destination_location=request.destination_location,
         start_node=start_node,
         destination_node=destination_node,
-        recommended_route=json.dumps(recommended_route),
+        recommended_route=json.dumps(
+            recommended_route
+        ),
         risk_level=risk_level,
         risk_score=risk_score,
         distance_km=distance_km,
         estimated_time_hours=estimated_time_hours,
         status="PLANNED",
-        created_at=datetime.now(timezone.utc).replace(tzinfo=None)
+        created_at=(
+            datetime.now(timezone.utc)
+            .replace(tzinfo=None)
+        )
     )
 
     db.add(trip)
@@ -255,7 +340,9 @@ def create_trip(
             "risk_level": trip.risk_level,
             "risk_score": trip.risk_score,
             "distance_km": trip.distance_km,
-            "estimated_time_hours": trip.estimated_time_hours,
+            "estimated_time_hours": (
+                trip.estimated_time_hours
+            ),
             "status": trip.status,
             "blocked_roads": blocked_roads
         }
@@ -272,10 +359,6 @@ def reroute_trip(
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    # -----------------------------------------------------
-    # Find trip
-    # -----------------------------------------------------
-
     trip = (
         db.query(Trip)
         .filter(Trip.trip_id == trip_id)
@@ -288,9 +371,11 @@ def reroute_trip(
             detail="Trip not found"
         )
 
-    # -----------------------------------------------------
-    # Find vehicle
-    # -----------------------------------------------------
+    check_trip_access(
+        current_user,
+        trip,
+        db
+    )
 
     vehicle = (
         db.query(Vehicle)
@@ -304,19 +389,12 @@ def reroute_trip(
             detail="Vehicle assigned to this trip was not found"
         )
 
-    # -----------------------------------------------------
-    # Get active blocked roads
-    # -----------------------------------------------------
-
     blocked_roads = get_active_blocked_roads(db)
-
-    # -----------------------------------------------------
-    # Determine routing start node
-    # -----------------------------------------------------
 
     current_node = None
 
     if trip.status == "IN_TRANSIT":
+
         if vehicle.current_road_id:
             current_node = find_current_node(
                 vehicle.current_road_id
@@ -332,17 +410,12 @@ def reroute_trip(
                 status_code=400,
                 detail=(
                     "Unable to determine vehicle's current node. "
-                    "Update the vehicle GPS location or current road first."
+                    "Update GPS location or current road first."
                 )
             )
 
-    # For planned trips, use the original start node.
     if current_node is None:
         current_node = trip.start_node
-
-    # -----------------------------------------------------
-    # Call existing ML route engine
-    # -----------------------------------------------------
 
     try:
         route_result = predict_route(
@@ -358,23 +431,20 @@ def reroute_trip(
             detail=f"Rerouting failed: {str(e)}"
         )
 
-    # -----------------------------------------------------
-    # Extract result
-    # -----------------------------------------------------
+    data = route_result.get(
+        "data",
+        route_result
+    )
 
-    data = route_result.get("data", route_result)
-
-    recommended_route = data.get("recommended_route")
+    recommended_route = data.get(
+        "recommended_route"
+    )
 
     if not isinstance(recommended_route, dict):
         raise HTTPException(
             status_code=500,
             detail="Invalid rerouting response"
         )
-
-    # -----------------------------------------------------
-    # Update stored route information
-    # -----------------------------------------------------
 
     trip.recommended_route = json.dumps(
         recommended_route
@@ -398,10 +468,6 @@ def reroute_trip(
 
     db.commit()
     db.refresh(trip)
-
-    # -----------------------------------------------------
-    # Response
-    # -----------------------------------------------------
 
     return {
         "success": True,
@@ -451,6 +517,12 @@ def start_trip(
             detail="Trip not found"
         )
 
+    check_trip_access(
+        current_user,
+        trip,
+        db
+    )
+
     if trip.status != "PLANNED":
         raise HTTPException(
             status_code=400,
@@ -478,7 +550,10 @@ def start_trip(
     ):
         raise HTTPException(
             status_code=400,
-            detail="Vehicle is already assigned to another active trip"
+            detail=(
+                "Vehicle is already assigned "
+                "to another active trip"
+            )
         )
 
     trip.status = "IN_TRANSIT"
@@ -529,6 +604,12 @@ def complete_trip(
             detail="Trip not found"
         )
 
+    check_trip_access(
+        current_user,
+        trip,
+        db
+    )
+
     if trip.status != "IN_TRANSIT":
         raise HTTPException(
             status_code=400,
@@ -571,8 +652,222 @@ def complete_trip(
             "vehicle_id": trip.vehicle_id,
             "status": trip.status,
             "vehicle_status": vehicle.status,
-            "completed_at": trip.completed_at.isoformat()
+            "completed_at": (
+                trip.completed_at.isoformat()
+            )
         }
+    }
+
+
+# =========================================================
+# CANCEL TRIP
+# =========================================================
+
+@router.post("/{trip_id}/cancel")
+def cancel_trip(
+    trip_id: str,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    trip = (
+        db.query(Trip)
+        .filter(Trip.trip_id == trip_id)
+        .first()
+    )
+
+    if not trip:
+        raise HTTPException(
+            status_code=404,
+            detail="Trip not found"
+        )
+
+    check_trip_access(
+        current_user,
+        trip,
+        db
+    )
+
+    if trip.status == "COMPLETED":
+        raise HTTPException(
+            status_code=400,
+            detail="Completed trip cannot be cancelled"
+        )
+
+    if trip.status == "CANCELLED":
+        raise HTTPException(
+            status_code=400,
+            detail="Trip is already cancelled"
+        )
+
+    vehicle = (
+        db.query(Vehicle)
+        .filter(Vehicle.vehicle_id == trip.vehicle_id)
+        .first()
+    )
+
+    trip.status = "CANCELLED"
+
+    if vehicle:
+        vehicle.status = "AVAILABLE"
+        vehicle.active_trip_id = None
+
+    db.commit()
+    db.refresh(trip)
+
+    return {
+        "success": True,
+        "message": "Trip cancelled successfully",
+        "data": {
+            "trip_id": trip.trip_id,
+            "vehicle_id": trip.vehicle_id,
+            "status": trip.status,
+            "vehicle_status": (
+                vehicle.status
+                if vehicle
+                else None
+            )
+        }
+    }
+
+
+# =========================================================
+# MONITOR TRIP
+# =========================================================
+
+@router.get("/{trip_id}/monitor")
+def monitor_trip(
+    trip_id: str,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    trip = (
+        db.query(Trip)
+        .filter(Trip.trip_id == trip_id)
+        .first()
+    )
+
+    if not trip:
+        raise HTTPException(
+            status_code=404,
+            detail="Trip not found"
+        )
+
+    check_trip_access(
+        current_user,
+        trip,
+        db
+    )
+
+    vehicle = (
+        db.query(Vehicle)
+        .filter(Vehicle.vehicle_id == trip.vehicle_id)
+        .first()
+    )
+
+    if not vehicle:
+        raise HTTPException(
+            status_code=404,
+            detail="Vehicle not found"
+        )
+
+    recommended_road_ids = []
+
+    if trip.recommended_route:
+        try:
+            route_data = json.loads(
+                trip.recommended_route
+            )
+
+            if isinstance(route_data, dict):
+                recommended_road_ids = (
+                    route_data.get("road_ids", [])
+                )
+
+        except (json.JSONDecodeError, TypeError):
+            recommended_road_ids = []
+
+    if trip.status == "PLANNED":
+        return {
+            "success": True,
+            "trip_id": trip.trip_id,
+            "status": trip.status,
+            "monitor_status": "NOT_STARTED",
+            "message": "Trip has not started yet",
+            "vehicle_id": vehicle.vehicle_id,
+            "current_location": vehicle.current_location,
+            "current_road_id": vehicle.current_road_id,
+            "recommended_road_ids": recommended_road_ids,
+            "route_deviation": False,
+            "latitude": vehicle.latitude,
+            "longitude": vehicle.longitude,
+            "speed": vehicle.speed,
+            "last_gps_update": (
+                vehicle.last_gps_update.isoformat()
+                if vehicle.last_gps_update
+                else None
+            )
+        }
+
+    if not vehicle.current_road_id:
+        return {
+            "success": True,
+            "trip_id": trip.trip_id,
+            "status": trip.status,
+            "monitor_status": "GPS_UNAVAILABLE",
+            "message": "Vehicle current road is not available",
+            "vehicle_id": vehicle.vehicle_id,
+            "current_location": vehicle.current_location,
+            "current_road_id": None,
+            "recommended_road_ids": recommended_road_ids,
+            "route_deviation": False,
+            "latitude": vehicle.latitude,
+            "longitude": vehicle.longitude,
+            "speed": vehicle.speed,
+            "last_gps_update": (
+                vehicle.last_gps_update.isoformat()
+                if vehicle.last_gps_update
+                else None
+            )
+        }
+
+    current_road = vehicle.current_road_id
+
+    is_on_route = (
+        current_road in recommended_road_ids
+    )
+
+    if is_on_route:
+        monitor_status = "ON_ROUTE"
+        message = (
+            "Vehicle is following "
+            "the recommended route"
+        )
+    else:
+        monitor_status = "ROUTE_DEVIATION"
+        message = (
+            "Vehicle has deviated "
+            "from the recommended route"
+        )
+
+    return {
+        "success": True,
+        "trip_id": trip.trip_id,
+        "status": trip.status,
+        "monitor_status": monitor_status,
+        "message": message,
+        "vehicle_id": vehicle.vehicle_id,
+        "current_location": vehicle.current_location,
+        "latitude": vehicle.latitude,
+        "longitude": vehicle.longitude,
+        "current_road_id": current_road,
+        "recommended_road_ids": recommended_road_ids,
+        "route_deviation": not is_on_route,
+        "speed": vehicle.speed,
+        "last_gps_update": (
+            vehicle.last_gps_update.isoformat()
+            if vehicle.last_gps_update
+            else None
+        )
     }
 
 
@@ -591,6 +886,40 @@ def get_trips(
         .all()
     )
 
+    # Drivers should only see trips belonging
+    # to their assigned vehicle.
+    role = str(
+        current_user.get("role", "")
+    ).upper()
+
+    if role == "DRIVER":
+        user = (
+            db.query(User)
+            .filter(
+                User.user_id
+                == current_user.get("user_id")
+            )
+            .first()
+        )
+
+        if not user:
+            raise HTTPException(
+                status_code=401,
+                detail="Authenticated user not found"
+            )
+
+        trips = [
+            trip
+            for trip in trips
+            if trip.vehicle_id == user.vehicle_id
+        ]
+
+    elif role not in {"ADMIN", "OPERATOR"}:
+        raise HTTPException(
+            status_code=403,
+            detail="Insufficient permissions"
+        )
+
     return {
         "success": True,
         "count": len(trips),
@@ -600,12 +929,18 @@ def get_trips(
                 "vehicle_id": trip.vehicle_id,
                 "cargo_type": trip.cargo_type,
                 "start_location": trip.start_location,
-                "destination_location": trip.destination_location,
-                "recommended_route": trip.recommended_route,
+                "destination_location": (
+                    trip.destination_location
+                ),
+                "recommended_route": (
+                    trip.recommended_route
+                ),
                 "risk_level": trip.risk_level,
                 "risk_score": trip.risk_score,
                 "distance_km": trip.distance_km,
-                "estimated_time_hours": trip.estimated_time_hours,
+                "estimated_time_hours": (
+                    trip.estimated_time_hours
+                ),
                 "status": trip.status
             }
             for trip in trips
@@ -635,22 +970,40 @@ def get_trip(
             detail="Trip not found"
         )
 
+    check_trip_access(
+        current_user,
+        trip,
+        db
+    )
+
     return {
         "success": True,
         "data": {
             "trip_id": trip.trip_id,
             "vehicle_id": trip.vehicle_id,
             "cargo_type": trip.cargo_type,
-            "cargo_description": trip.cargo_description,
-            "start_location": trip.start_location,
-            "destination_location": trip.destination_location,
+            "cargo_description": (
+                trip.cargo_description
+            ),
+            "start_location": (
+                trip.start_location
+            ),
+            "destination_location": (
+                trip.destination_location
+            ),
             "start_node": trip.start_node,
-            "destination_node": trip.destination_node,
-            "recommended_route": trip.recommended_route,
+            "destination_node": (
+                trip.destination_node
+            ),
+            "recommended_route": (
+                trip.recommended_route
+            ),
             "risk_level": trip.risk_level,
             "risk_score": trip.risk_score,
             "distance_km": trip.distance_km,
-            "estimated_time_hours": trip.estimated_time_hours,
+            "estimated_time_hours": (
+                trip.estimated_time_hours
+            ),
             "status": trip.status,
             "created_at": (
                 trip.created_at.isoformat()
@@ -666,141 +1019,4 @@ def get_trip(
                 else None
             )
         }
-    }
-
-@router.get("/{trip_id}/monitor")
-def monitor_trip(
-    trip_id: str,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
-):
-    """
-    Monitor a trip and detect route deviation using the vehicle's
-    current road and the ML-recommended route.
-    """
-
-    trip = db.query(Trip).filter(Trip.trip_id == trip_id).first()
-
-    if not trip:
-        raise HTTPException(status_code=404, detail="Trip not found")
-
-    vehicle = (
-        db.query(Vehicle)
-        .filter(Vehicle.vehicle_id == trip.vehicle_id)
-        .first()
-    )
-
-    if not vehicle:
-        raise HTTPException(status_code=404, detail="Vehicle not found")
-
-    # Trip has not started yet
-    if trip.status == "PLANNED":
-        return {
-            "trip_id": trip.trip_id,
-            "status": trip.status,
-            "monitor_status": "NOT_STARTED",
-            "message": "Trip has not started yet",
-            "vehicle_id": vehicle.vehicle_id,
-            "current_road_id": vehicle.current_road_id,
-            "recommended_road_ids": [],
-            "route_deviation": False,
-        }
-
-    # Extract recommended road IDs from stored ML route
-    recommended_road_ids = []
-
-    if trip.recommended_route:
-        try:
-            route_data = json.loads(trip.recommended_route)
-
-            if isinstance(route_data, dict):
-                recommended_road_ids = route_data.get("road_ids", [])
-
-        except (json.JSONDecodeError, TypeError):
-            recommended_road_ids = []
-
-    # GPS has not provided a road yet
-    if not vehicle.current_road_id:
-        return {
-            "trip_id": trip.trip_id,
-            "status": trip.status,
-            "monitor_status": "GPS_UNAVAILABLE",
-            "message": "Vehicle current road is not available",
-            "vehicle_id": vehicle.vehicle_id,
-            "current_road_id": None,
-            "recommended_road_ids": recommended_road_ids,
-            "route_deviation": False,
-        }
-
-    current_road = vehicle.current_road_id
-
-    # Check whether vehicle is following recommended route
-    is_on_route = current_road in recommended_road_ids
-
-    if is_on_route:
-        monitor_status = "ON_ROUTE"
-        message = "Vehicle is following the recommended route"
-    else:
-        monitor_status = "ROUTE_DEVIATION"
-        message = "Vehicle has deviated from the recommended route"
-
-    return {
-        "trip_id": trip.trip_id,
-        "status": trip.status,
-        "monitor_status": monitor_status,
-        "message": message,
-        "vehicle_id": vehicle.vehicle_id,
-        "current_location": vehicle.current_location,
-        "latitude": vehicle.latitude,
-        "longitude": vehicle.longitude,
-        "current_road_id": current_road,
-        "recommended_road_ids": recommended_road_ids,
-        "route_deviation": not is_on_route,
-        "speed": vehicle.speed,
-        "last_gps_update": vehicle.last_gps_update,
-    }
-@router.post("/{trip_id}/cancel")
-def cancel_trip(
-    trip_id: str,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
-):
-    trip = db.query(Trip).filter(Trip.trip_id == trip_id).first()
-
-    if not trip:
-        raise HTTPException(status_code=404, detail="Trip not found")
-
-    vehicle = (
-        db.query(Vehicle)
-        .filter(Vehicle.vehicle_id == trip.vehicle_id)
-        .first()
-    )
-
-    if trip.status == "COMPLETED":
-        raise HTTPException(
-            status_code=400,
-            detail="Completed trip cannot be cancelled",
-        )
-
-    if trip.status == "CANCELLED":
-        raise HTTPException(
-            status_code=400,
-            detail="Trip is already cancelled",
-        )
-
-    trip.status = "CANCELLED"
-
-    if vehicle:
-        vehicle.status = "AVAILABLE"
-        vehicle.active_trip_id = None
-
-    db.commit()
-    db.refresh(trip)
-
-    return {
-        "message": "Trip cancelled successfully",
-        "trip_id": trip.trip_id,
-        "status": trip.status,
-        "vehicle_id": trip.vehicle_id,
-        "vehicle_status": vehicle.status if vehicle else None,
     }
