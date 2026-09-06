@@ -2,3 +2,4 @@ backend/logs/
 logs/
 .env.test
 .env.test
+.env
